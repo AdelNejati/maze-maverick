@@ -1,8 +1,11 @@
+#include <iostream>
+#include <string>
 #include <bits/stdc++.h>
 #include <windows.h>
 #include <stdio.h>
 #include <conio.h>
 #include <cmath>
+using namespace std;
 
 #define LTARROW 0x4B
 #define RTARROW 0x4D
@@ -21,16 +24,12 @@
 #define F8_Key 0x4200
 #define F9_Key 0x4300
 #define F10_Key 0x4400
-using namespace std;
 
-#include <iostream>
-#include <string>
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #define VC_EXTRALEAN
 #include <Windows.h> // for displaying colors
 #endif               // Windows
-using namespace std;
 
 #define color_black 0
 #define color_dark_blue 1
@@ -207,7 +206,7 @@ int main()
     {
         cout << endl;
 
-        if (i % 2 != 1)
+        if (i % 2 == 0)
         {
 
             for (int j = 1; j <= y * 2 + 1; j++)
