@@ -172,23 +172,57 @@ int main() {
         cin>> gg[i];
 =======
 
-int main()
+// for getch
+
+#ifdef __MINGW32__
+#include <conio.h>
+const int UP_KEY = 72;
+const int DOWN_KEY = 80;
+const int ENTER_KEY = 13;
+const int RIGHT_KEY = 77;
+const int LEFT_KEY = 75;
+#elif defined(__LINUX__) || defined(__gnu_linux__) || defined(__linux__)
+#include <termios.h>
+const int UP_KEY = 65;
+const int DOWN_KEY = 66;
+const int RIGHT_KEY = 67;
+const int LEFT_KEY = 68;
+const int ENTER_KEY = int('\n');
+int getch(void);
+#endif
+
+#if defined(__LINUX__) || defined(__gnu_linux__) || defined(__linux__)
+int getch(void)
 {
-    int x, y;
-    cout << "Enter number of lines : ";
-    cin >> x;
-    cout << "Enter number of columns : ";
-    cin >> y;
-    int table[x][y] ;
-    for (int i = 0; i < x; i++)
-    {
-        for (int j = 0; j < y; j++)
-        {
-            
-            table[i][j] = 0;
-            // cout<<table[i][j];
-        }
-    }
+    struct termios oldattr, newattr;
+    int ch;
+    tcgetattr(STDIN_FILENO, &oldattr);
+    newattr = oldattr;
+    newattr.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newattr);
+    ch = getchar();
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldattr);
+    return ch;
+}
+#endif
+
+void clean()
+{
+#if defined _WIN32
+    system("cls");
+    // clrscr(); // including header file : conio.h
+#elif defined(__LINUX__) || defined(__gnu_linux__) || defined(__linux__)
+    system("clear");
+    // std::cout<< u8"\033[2J\033[1;1H"; //Using ANSI Escape Sequences
+#elif defined(__APPLE__)
+    system("clear");
+#endif
+}
+//...
+// output map
+void map_output(int x, int y, int **table, int xx, int yy, int **path)
+{
+
     for (int i = 0; i < x * 2 + 1; i++)
     {
         cout << endl;
@@ -211,7 +245,23 @@ int main()
                 }
                 else
                 {
-                    print(to_string(table[(i-1)/2][(j-1)/2]), color_pink, color_black);
+                    if ((i - 1) / 2 == xx && (j - 1) / 2 == yy)
+                    {
+                        print(to_string(table[(i - 1) / 2][(j - 1) / 2]), color_pink, color_black);
+                    }
+                    else
+                    {
+                        print(to_string(table[(i - 1) / 2][(j - 1) / 2]), color_white, color_black);
+                    }
+                    // if(color ==2){
+                    // print(to_string(table[(i-1)/2][(j-1)/2]), color_blue, color_black);
+                    // }
+                    // if(color ==3){
+                    // print(to_string(table[(i-1)/2][(j-1)/2]), color_gray, color_black);
+                    // }
+                    // if(color ==4){
+                    // print(to_string(table[(i-1)/2][(j-1)/2]), color_green, color_black);
+                    // }
                 }
             }
         }
@@ -224,6 +274,7 @@ int main()
         }
 >>>>>>> Stashed changes
     }
+<<<<<<< Updated upstream
 
 
 
@@ -285,3 +336,93 @@ cout<<"\n";
     println();
     return 0;
 }
+=======
+}
+
+int main()
+{
+    int x, y, l;
+    cout << "Enter number of lines : ";
+    cin >> x;
+    cout << "Enter number of columns : ";
+    cin >> y;
+    cout << "Enter length of the path : ";
+    cin >> l;
+    int **path = new int *[l];
+    for (int i = 0; i < l; i++)
+    {
+        *(path + i) = new int[2];
+        for (int j = 0; j < 2; j++)
+        {
+            path[i][j] = x;
+        }
+    }
+
+    int **table = new int *[x];
+    for (int i = 0; i < x; i++)
+    {
+        *(table + i) = new int[y];
+        for (int j = 0; j < y; j++)
+        {
+            table[i][j] = 0;
+        }
+    }
+    for (int i = 0; i < x; i++)
+    {
+        for (int j = 0; j < y; j++)
+        {
+
+            table[i][j] = 0;
+            // cout<<table[i][j];
+        }
+    }
+    // int** t=new int* [x];
+    int xx = 0, yy = 0;
+    map_output(x, y, table, xx, yy, path);
+    char q;
+    for (size_t i = 0; i < l;)
+    {
+
+        q = getch();
+        clean();
+        // cout<<int(q);
+        if ((int)q == 72 && xx - 1 >= 0)
+        {
+            path[i][0] = xx;
+            path[i][1] = yy;
+            xx = xx - 1;
+            map_output(x, y, table, xx, yy, path);
+            i++;
+        }
+        else if ((int)q == 80 && (xx + 1) < x)
+        {
+            path[i][0] = xx;
+            path[i][1] = yy;
+            xx = xx + 1;
+            map_output(x, y, table, xx, yy, path);
+            i++;
+        }
+        else if ((int)q == 77 && yy + 1 < y)
+        {
+            path[i][0] = xx;
+            path[i][1] = yy;
+            yy = yy + 1;
+            map_output(x, y, table, xx, yy, path);
+            i++;
+        }
+        else if ((int)q == 75 && yy - 1 >= 0)
+        {
+            path[i][0] = xx;
+            path[i][1] = yy;
+            yy = yy - 1;
+            map_output(x, y, table, xx, yy, path);
+            i++;
+        }
+        else
+        {
+            map_output(x, y, table, xx, yy, path);
+            print("\nInvalid move!!\nPlease try again", color_red, color_black);
+        }
+    }
+}
+>>>>>>> Stashed changes
