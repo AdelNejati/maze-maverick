@@ -23,7 +23,6 @@
 #define F8_Key 0x4200
 #define F9_Key 0x4300
 #define F10_Key 0x4400
-using namespace std;
 
 
 
@@ -151,6 +150,7 @@ void print_no_reset(const string& s, const int textcolor, const int backgroundco
     print_color(textcolor, backgroundcolor);
     cout << s;
 }
+<<<<<<< Updated upstream
 int main() {
 
     int v,vv,vh,n;
@@ -170,6 +170,59 @@ int main() {
     for (int i=1;i!=n;i++){
         print("Enter environment`s gravity : ", color_light_blue, color_black);
         cin>> gg[i];
+=======
+
+int main()
+{
+    int x, y;
+    cout << "Enter number of lines : ";
+    cin >> x;
+    cout << "Enter number of columns : ";
+    cin >> y;
+    int table[x][y] ;
+    for (int i = 0; i < x; i++)
+    {
+        for (int j = 0; j < y; j++)
+        {
+            
+            table[i][j] = 0;
+            // cout<<table[i][j];
+        }
+    }
+    for (int i = 0; i < x * 2 + 1; i++)
+    {
+        cout << endl;
+
+        if (i % 2 != 0)
+        {
+
+            for (int j = 0; j < y * 2 + 1; j++)
+            {
+                if (j % 2 == 0)
+                {
+                    if (j == 0)
+                    {
+                        cout << "|  ";
+                    }
+                    else
+                    {
+                        cout << "  |  ";
+                    }
+                }
+                else
+                {
+                    print(to_string(table[(i-1)/2][(j-1)/2]), color_pink, color_black);
+                }
+            }
+        }
+        else
+        {
+            for (int j = 0; j < y * 6 + 1; j++)
+            {
+                cout << "-";
+            }
+        }
+>>>>>>> Stashed changes
     }
 
 
