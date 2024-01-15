@@ -196,7 +196,7 @@ void print_no_reset(const string &s, const int textcolor, const int backgroundco
     cout << s;
 }
 // inja baray declear
-bool make_path(int **path, int xx, int yy, int l, int x, int y, int **table,int maxv,int minv,int maxb , int minb);
+bool make_path(int **path, int xx, int yy, int l, int x, int y, int **table, int maxv, int minv, int maxb, int minb);
 bool is_on_the_path(int **path, int xx, int yy, int l);
 bool gandz(int **path, int xx, int yy, int l, int x, int y, int uc, int rc, int dc, int lc);
 bool gand(int **path, int xx, int yy, int l, int x, int y)
@@ -296,7 +296,8 @@ void map_output(int x, int y, int **table, int xx, int yy, int **path, int l)
                     {
                         print(to_string(table[(i - 1) / 2][(j - 1) / 2]), color_pink, color_black);
                     }
-                    else if(table[(i - 1) / 2][(j - 1) / 2]==0){
+                    else if (table[(i - 1) / 2][(j - 1) / 2] == 0)
+                    {
                         print(to_string(table[(i - 1) / 2][(j - 1) / 2]), color_red, color_black);
                     }
                     else if (flag == 1)
@@ -330,6 +331,8 @@ int main()
     int x, y, l;
     int xx = 0, yy = 0;
     int max_value, min_value, max_block, min_block;
+
+
     cout << "Enter number of lines : ";
     cin >> x;
     cout << "Enter number of columns : ";
@@ -344,8 +347,23 @@ int main()
     cin >> min_block;
     cout << "Enter maximum number of blocks : ";
     cin >> max_block;
-    
 
+    if((x+y)%2!=l%2){
+        cerr<<"invalid path length";
+        exit(0);
+    }
+    if(l>x*y-1){
+        cerr<<"invalid path length";
+        exit(0);
+    }
+    if(l<x+y-2){
+        cerr<<"invalid path length";
+        exit(0);
+    }
+    if(l+min_block+1>x*y){
+        cerr<<"invalid path length";
+        exit(0);
+    }
 
 
 
@@ -373,7 +391,7 @@ int main()
         }
     }
 
-    make_path(path, xx, yy, l, x, y, table, max_value , min_value, max_block, min_block);
+    make_path(path, xx, yy, l, x, y, table, max_value, min_value, max_block, min_block);
 
     map_output(x, y, table, xx, yy, path, l);
 
@@ -389,7 +407,7 @@ int main()
 
     map_output(x, y, table, xx, yy, path, l);
     char q;
-    int sum=table[0][0];
+    int sum = table[0][0];
     for (size_t i = 0; i < l;)
     {
         if (gand(path, xx, yy, l, x, y))
@@ -400,40 +418,40 @@ int main()
         q = getch();
         clean();
         // cout<<int(q);
-        if ((int)q == 72 && xx - 1 >= 0 && !is_on_the_path(path, xx - 1, yy, l)&&table[xx-1][yy]!=0)
+        if ((int)q == 72 && xx - 1 >= 0 && !is_on_the_path(path, xx - 1, yy, l) && table[xx - 1][yy] != 0)
         {
             path[i][0] = xx;
             path[i][1] = yy;
             xx = xx - 1;
             map_output(x, y, table, xx, yy, path, l);
-            sum+=table[xx][yy];
+            sum += table[xx][yy];
             i++;
         }
-        else if ((int)q == 80 && (xx + 1) < x && !is_on_the_path(path, xx + 1, yy, l)&&table[xx+1][yy]!=0)
+        else if ((int)q == 80 && (xx + 1) < x && !is_on_the_path(path, xx + 1, yy, l) && table[xx + 1][yy] != 0)
         {
             path[i][0] = xx;
             path[i][1] = yy;
             xx = xx + 1;
             map_output(x, y, table, xx, yy, path, l);
-            sum+=table[xx][yy];
+            sum += table[xx][yy];
             i++;
         }
-        else if ((int)q == 77 && yy + 1 < y && !is_on_the_path(path, xx, yy + 1, l)&&table[xx][yy+1]!=0)
+        else if ((int)q == 77 && yy + 1 < y && !is_on_the_path(path, xx, yy + 1, l) && table[xx][yy + 1] != 0)
         {
             path[i][0] = xx;
             path[i][1] = yy;
             yy = yy + 1;
             map_output(x, y, table, xx, yy, path, l);
-            sum+=table[xx][yy];
+            sum += table[xx][yy];
             i++;
         }
-        else if ((int)q == 75 && yy - 1 >= 0 && !is_on_the_path(path, xx, yy - 1, l)&&table[xx][yy-1]!=0)
+        else if ((int)q == 75 && yy - 1 >= 0 && !is_on_the_path(path, xx, yy - 1, l) && table[xx][yy - 1] != 0)
         {
             path[i][0] = xx;
             path[i][1] = yy;
             yy = yy - 1;
             map_output(x, y, table, xx, yy, path, l);
-            sum+=table[xx][yy];
+            sum += table[xx][yy];
             i++;
         }
         else
@@ -441,16 +459,19 @@ int main()
             map_output(x, y, table, xx, yy, path, l);
             print("\nInvalid move!!\nPlease try again", color_red, color_black);
         }
-        if((xx==x-1&&yy==y-1)||(i==l)){
-            if(i==l&&sum/2==table[x-1][y-1]){
-             cout<<"\nyou won";   
+        if ((xx == x - 1 && yy == y - 1) || (i == l))
+        {
+            if (i == l && sum / 2 == table[x - 1][y - 1])
+            {
+                cout << "\nyou won";
             }
-            else{
-            cout<<"\nyou lost";
+            else
+            {
+                cout << "\nyou lost";
             }
             break;
         }
-        cout<<"\nyour path sum : "<<sum;
+        cout << "\nyour path sum : " << sum;
     }
 }
 
@@ -467,21 +488,24 @@ bool is_on_the_path(int **path, int xx, int yy, int l)
     return 0;
 }
 
-bool make_path(int **path, int xx, int yy, int l, int x, int y, int **table,int maxv,int minv,int maxb , int minb)
+bool make_path(int **path, int xx, int yy, int l, int x, int y, int **table, int maxv, int minv, int maxb, int minb)
 {
     srand(time(0));
-int r=0;
-    int sum=0;
-          while(r==0){
-            if(minv!=maxv){
-            r=rand()%(maxv-minv+1)+minv;
-            }
-            else {
-                r=minv;
-            }
-            }
-            table[0][0]=r;
-            sum+=r;
+    int r = 0;
+    int sum = 0;
+    while (r == 0)
+    {
+        if (minv != maxv)
+        {
+            r = rand() % (maxv - minv + 1) + minv;
+        }
+        else
+        {
+            r = minv;
+        }
+    }
+    table[0][0] = r;
+    sum += r;
 
 inja:
     xx = 0;
@@ -516,12 +540,11 @@ inja:
     }
     int h = 0;
 
-
     while (true)
     {
         int najafi = rand() % 4;
         // cout<<najafi;
-        r=0;
+        r = 0;
         if (najafi == 0 && uc > 0 && xx - 1 >= 0 && !is_on_the_path(path, xx - 1, yy, l))
         {
             //   print(to_string(najafi),color_blue,color_black);
@@ -572,71 +595,77 @@ inja:
         }
     }
 
-
-    for (size_t i = 0; i < l-1; i++)
+    for (size_t i = 0; i < l - 1; i++)
     {
-        r=0;
-          while(r==0){
-            if(minv!=maxv){
-            r=rand()%(maxv-minv+1)+minv;
+        r = 0;
+        while (r == 0)
+        {
+            if (minv != maxv)
+            {
+                r = rand() % (maxv - minv + 1) + minv;
             }
-            else {
-                r=minv;
+            else
+            {
+                r = minv;
             }
-            }
+        }
 
-        table[path[i][0]][path[i][1]]=r;
-        sum+=r;
+        table[path[i][0]][path[i][1]] = r;
+        sum += r;
     }
-    table[x-1][y-1]=sum;
+    table[x - 1][y - 1] = sum;
     for (size_t i = 0; i < x; i++)
     {
         for (size_t j = 0; j < y; j++)
         {
-            if(!is_on_the_path(path, i,j, l)&&(i!=0||j!=0)){
-            r=0;
-          while(r==0){
-            if(minv!=maxv){
-            r=rand()%(maxv-minv+1)+minv;
-            }
-            else {
-                r=minv;
-            }
-            }
-
-                table[i][j]=r;
-            }
-        }
-        
-    }
-
-          r=0;
-          while(r==0){
-            if(minb!=maxb){
-            r=rand()%(maxb-minb+1)+minb;
-            }
-            else {
-                r=minb;
-            }
-            }
-            int nb=r,e;
-            for (size_t i = 0; i < nb;)
+            if (!is_on_the_path(path, i, j, l) && (i != 0 || j != 0))
             {
-                r=rand()%x;
-                e=rand()%y;
-                if(!is_on_the_path(path, r,e, l)&&(r!=0||e!=0)&&table[r][e]!=0){
-                    table [r][e]=0;
-                    i++;
+                r = 0;
+                while (r == 0)
+                {
+                    if (minv != maxv)
+                    {
+                        r = rand() % (maxv - minv + 1) + minv;
+                    }
+                    else
+                    {
+                        r = minv;
+                    }
                 }
 
-                
+                table[i][j] = r;
             }
-            
-    
-    
+        }
+    }
+
+    r = 0;
+    while (r == 0)
+    {
+        if (minb != maxb)
+        {
+            r = rand() % (maxb - minb + 1) + minb;
+        }
+        else
+        {
+            r = minb;
+        }
 
 
-
+        if(r+l+1>x*y){
+            r=0;
+        }
+    }
+    int nb = r, e;
+    for (size_t i = 0; i < nb;)
+    {
+        r = rand() % x;
+        e = rand() % y;
+        if (!is_on_the_path(path, r, e, l) && (r != 0 || e != 0) && table[r][e] != 0)
+        {
+            table[r][e] = 0;
+            i++;
+        }
+    }
 
     return 1;
 }
