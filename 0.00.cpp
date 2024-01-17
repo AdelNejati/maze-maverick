@@ -326,65 +326,177 @@ void map_output(int x, int y, int **table, int xx, int yy, int **path, int l)
     }
 }
 
-void playground()
+
+
+
+
+
+
+
+
+string map_save(int x, int y, int **table, int xx, int yy, int **path, int l)
 {
+    string s;
+    for (int i = 0; i < x * 2 + 1; i++)
+    {
+        s+= "\n";
+
+        if (i % 2 != 0)
+        {
+
+            for (int j = 0; j < y * 2 + 1; j++)
+            {
+                if (j % 2 == 0)
+                {
+                    if (j == 0)
+                    {
+                        s+= "|  ";
+                    }
+                    else
+                    {
+                        s+="  |  ";
+                    }
+                }
+                else
+                {
+
+                    bool flag = 1;
+                    for (size_t h = 0; h < l; h++)
+                    {
+                        if (path[h][0] == (i - 1) / 2 && path[h][1] == (j - 1) / 2)
+                        {
+                            flag = 0;
+                            // print(to_string(table[(i - 1) / 2][(j - 1) / 2]), color_green, color_black);
+                            s+=to_string(table[(i - 1) / 2][(j - 1) / 2]);
+                        }
+                    }
+
+                    if ((i - 1) / 2 == xx && (j - 1) / 2 == yy)
+                    {
+                        // print(to_string(table[(i - 1) / 2][(j - 1) / 2]), color_pink, color_black);
+                            s+=to_string(table[(i - 1) / 2][(j - 1) / 2]);
+                    }
+                    else if (table[(i - 1) / 2][(j - 1) / 2] == 0)
+                    {
+                        // print(to_string(table[(i - 1) / 2][(j - 1) / 2]), color_red, color_black);/
+                            s+=to_string(table[(i - 1) / 2][(j - 1) / 2]);
+                    }
+                    else if (flag == 1)
+                    {
+                        // print(to_string(table[(i - 1) / 2][(j - 1) / 2]), color_white, color_black);
+                            s+=to_string(table[(i - 1) / 2][(j - 1) / 2]);
+                    }
+                    // if(color ==2){
+                    // print(to_string(table[(i-1)/2][(j-1)/2]), color_blue, color_black);
+                    // }
+                    // if(color ==3){
+                    // print(to_string(table[(i-1)/2][(j-1)/2]), color_gray, color_black);
+                    // }
+                    // if(color ==4){
+                    // print(to_string(table[(i-1)/2][(j-1)/2]), color_green, color_black);
+                    // }
+                }
+            }
+        }
+        else
+        {
+            for (int j = 0; j < y * 6 + 1; j++)
+            {
+                s+="-";
+            }
+        }
+    }
+    return s;
+
+}
+
+
+
+
+
+
+void create_map(string s)
+{
+    char q;
     int x, y, l;
     int xx = 0, yy = 0;
     int max_value, min_value, max_block, min_block;
-
-
+    string map;
 
     cout << "Enter number of lines : ";
     cin >> x;
     cout << "Enter number of columns : ";
     cin >> y;
-    cout << "Enter length of the path : ";
-    cin >> l;
-    cout << "Enter minimum value of table : ";
-    cin >> min_value;
-    cout << "Enter maximum value of table : ";
-    cin >> max_value;
-    cout << "Enter minimum number of blocks : ";
-    cin >> min_block;
-    cout << "Enter maximum number of blocks : ";
-    cin >> max_block;
-
+    if (s != "Easy")
+    {
+        cout << "Enter length of the path : ";
+        cin >> l;
+        cout << "Enter minimum value of table : ";
+        cin >> min_value;
+        cout << "Enter maximum value of table : ";
+        cin >> max_value;
+        cout << "Enter minimum number of blocks : ";
+        cin >> min_block;
+        cout << "Enter maximum number of blocks : ";
+        cin >> max_block;
+    }
+    else
+    {
+        l = x + y - 2;
+        min_value = -3;
+        max_value = 3;
+        min_block = 2;
+        max_block = 5;
+    }
     if ((x + y) % 2 != l % 2)
     {
         cerr << "invalid path length";
-        exit(0);
+                cout << "\npress any key to continue";
+        q = getch();
+        return;
     }
     if (l > x * y - 1)
     {
         cerr << "invalid path length";
-        exit(0);
+                cout << "\npress any key to continue";
+        q = getch();
+        return;
     }
     if (l < x + y - 2)
     {
         cerr << "invalid path length";
-        exit(0);
+                cout << "\npress any key to continue";
+        q = getch();
+        return;
     }
     if (l + min_block + 1 > x * y)
     {
         cerr << "invalid path length";
-        exit(0);
+                cout << "\npress any key to continue";
+        q = getch();
+        return;
     }
-    if (min_block>max_block)
+    if (min_block > max_block)
     {
         cerr << "invalid minimum and maximum blocks!!";
-        exit(0);
+                cout << "\npress any key to continue";
+        q = getch();
+        return;
     }
-    if (min_block<0)
+    if (min_block < 0)
     {
         cerr << "invalid minimum block!!";
-        exit(0);
+                cout << "\npress any key to continue";
+        q = getch();
+        return;
     }
-        if (min_value>max_value)
+    if (min_value > max_value)
     {
         cerr << "invalid minimum and maximum values!!";
-        exit(0);
+                cout << "\npress any key to continue";
+        q = getch();
+        return;
     }
-
 
     int **path = new int *[l];
     for (int i = 0; i < l; i++)
@@ -407,7 +519,52 @@ void playground()
     }
 
     make_path(path, xx, yy, l, x, y, table, max_value, min_value, max_block, min_block);
+    map= map_save(x, y, table, xx, yy, path, l);
+    string name,addres;
 
+        cout << "Map creation was successful\nPlease enter a name for your map : ";
+        cin >> name;
+
+        cout << "Your map has been saved as " << s<<'_'<<name << "\npress any key to continue";
+        addres = (char)92 +s+'_'+ name +'.' + "txt";
+        addres = "Maps" +addres;
+        // cout << name;
+        ofstream A(addres);
+        A << map;
+        A<<"\nmap name : "<< name;
+        A<<"\nmap level : "<<s;
+        A.close();
+        cout << "\npress any key to continue";
+        q = getch();
+
+    
+}
+
+void playground(int **table)
+{
+    char q;
+    int x, y, l;
+    int xx = 0, yy = 0;
+    int max_value, min_value, max_block, min_block;
+    int **path = new int *[l];
+    for (int i = 0; i < l; i++)
+    {
+        *(path + i) = new int[2];
+        for (int j = 0; j < 2; j++)
+        {
+            path[i][j] = x;
+        }
+    }
+
+    // int **table = new int *[x];
+    // for (int i = 0; i < x; i++)
+    // {
+    //     *(table + i) = new int[y];
+    //     for (int j = 0; j < y; j++)
+    //     {
+    //         table[i][j] = 0;
+    //     }
+    // }
     auto start = chrono::steady_clock::now();
 
     map_output(x, y, table, xx, yy, path, l);
@@ -423,7 +580,6 @@ void playground()
     // int** t=new int* [x];
 
     map_output(x, y, table, xx, yy, path, l);
-    char q;
     int sum = table[0][0];
     for (size_t i = 0; i < l;)
     {
@@ -702,114 +858,161 @@ bool gandz(int **path, int xx, int yy, int l, int x, int y, int uc, int rc, int 
     return 0;
 }
 
-void menu(int n){
-            print("1. ", color_red, color_black);
+void menu(int n)
+{
+    print("1. ", color_red, color_black);
     cout << "Create a New Map\n";
-                print("  -1.1 ", color_red, color_black);
-    if(n == 1){
+    print("  -1.1 ", color_red, color_black);
+    if (n == 1)
+    {
         print("  Easy\n", color_green, color_black);
     }
-    else{
-           print("  Easy\n", color_white, color_black);     
+    else
+    {
+        print("  Easy\n", color_white, color_black);
     }
-              print("  -1.2 ", color_red, color_black);
-    if(n == 2){
+    print("  -1.2 ", color_red, color_black);
+    if (n == 2)
+    {
         print("  Hard\n", color_green, color_black);
     }
-    else{
-           print("  Hard\n", color_white, color_black);     
+    else
+    {
+        print("  Hard\n", color_white, color_black);
     }
-              print("2. ", color_red, color_black);
-        cout << "Playground\n";
-                  print("  -2.1 ", color_red, color_black);
-    if(n == 3){
+    print("2. ", color_red, color_black);
+    cout << "Playground\n";
+    print("  -2.1 ", color_red, color_black);
+    if (n == 3)
+    {
         print("  Choose from Existing Maps\n", color_green, color_black);
     }
-    else{
-           print("  Choose from Existing Maps\n", color_white, color_black);     
+    else
+    {
+        print("  Choose from Existing Maps\n", color_white, color_black);
     }
-              print("  -2.2 ", color_red, color_black);
-    if(n == 4){
+    print("  -2.2 ", color_red, color_black);
+    if (n == 4)
+    {
         print("  Import a Custom Map\n", color_green, color_black);
     }
-    else{
-           print("  Import a Custom Map\n", color_white, color_black);     
+    else
+    {
+        print("  Import a Custom Map\n", color_white, color_black);
     }
-              print("3. ", color_red, color_black);
-        cout << "Solve a Maze\n";
-                  print("  -3.1 ", color_red, color_black);
-    if(n == 5){
+    print("3. ", color_red, color_black);
+    cout << "Solve a Maze\n";
+    print("  -3.1 ", color_red, color_black);
+    if (n == 5)
+    {
         print("  Choose from Existing Maps\n", color_green, color_black);
     }
-    else{
-           print("  Choose from Existing Maps\n", color_white, color_black);     
+    else
+    {
+        print("  Choose from Existing Maps\n", color_white, color_black);
     }
-              print("  -3.2 ", color_red, color_black);
-    if(n == 6){
+    print("  -3.2 ", color_red, color_black);
+    if (n == 6)
+    {
         print("  Import a Custom Map\n", color_green, color_black);
     }
-    else{
-           print("  Import a Custom Map\n", color_white, color_black);     
+    else
+    {
+        print("  Import a Custom Map\n", color_white, color_black);
     }
-              print("4. ", color_red, color_black);
-    if(n == 7){
+    print("4. ", color_red, color_black);
+    if (n == 7)
+    {
         print("History\n", color_green, color_black);
     }
-    else{
-           print("History\n", color_white, color_black);     
+    else
+    {
+        print("History\n", color_white, color_black);
     }
-              print("5. ", color_red, color_black);
-    if(n == 8){
+    print("5. ", color_red, color_black);
+    if (n == 8)
+    {
         print("Leaderboard\n", color_green, color_black);
     }
-    else{
-           print("Leaderboard\n", color_white, color_black);     
+    else
+    {
+        print("Leaderboard\n", color_white, color_black);
     }
-              print("6. ", color_red, color_black);
-    if(n == 9){
+    print("6. ", color_red, color_black);
+    if (n == 9)
+    {
         print("Exit\n", color_green, color_black);
     }
-    else{
-           print("Exit\n", color_white, color_black);     
+    else
+    {
+        print("Exit\n", color_white, color_black);
     }
-
 }
-int main(){
+int main()
+{
     // playground();
     cout << "Welcome to Maze Maverick\n";
     char q;
     int x = 1;
-            menu(1);
-    while(true){
-         q = getch();
+    menu(1);
+    while (true)
+    {
+        q = getch();
         clean();
         // cout << (int)q;
-            // cout << "Welcome to Maze Maverick\n";
+        // cout << "Welcome to Maze Maverick\n";
         // cout<<int(q);
         if ((int)q == 72 && x - 1 > 0)
         {
             x--;
         }
-        else if ((int)q == 80 && (x + 1) <= 9 )
+        else if ((int)q == 80 && (x + 1) <= 9)
         {
             x++;
         }
         else if ((int)q == 13)
         {
-            if(x == 4){
-                    playground();
+            if (x == 1)
+            {
+                create_map("Easy");
             }
+            if (x == 2)
+            {
+                create_map("Hard");
+            }
+            // if (x == 3)
+            // {
+            //     playground();
+            // }
+            // if (x == 4)
+            // {
+            //     playground();
+            // }
+            // if(x == 5){
+            //         playground();
+            // }
+            // if(x == 6){
+            //         playground();
+            // }
+            // if(x == 7){
+            //         playground();
+            // }
+            // if(x == 8){
+            //         playground();
+            // }
+            // if(x == 9){
+            //         playground();
+            // }
             x = 1;
-                   clean();
+            clean();
         }
         else
         {
-        //     map_output(x, y, table, xx, yy, path, l);
-        //     print("\nInvalid move!!\nPlease try again", color_red, color_black);
+            //     map_output(x, y, table, xx, yy, path, l);
+            //     print("\nInvalid move!!\nPlease try again", color_red, color_black);
         }
         menu(x);
     }
-
 
     return 0;
 }
