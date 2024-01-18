@@ -1,9 +1,17 @@
 #include <bits/stdc++.h>
+#include <iostream>
 #include <windows.h>
 #include <stdio.h>
 #include <conio.h>
 #include <cmath>
 #include <cstdlib>
+#include <fstream>
+#include <chrono>
+#include <filesystem>
+#include <string>
+#include <sys/stat.h>
+using namespace std;
+namespace fs = filesystem;
 
 #define LTARROW 0x4B
 #define RTARROW 0x4D
@@ -11,7 +19,6 @@
 #define DNARROW 0x50
 #define CR 0x0d
 #define ESC 0x1b
-
 #define F1_Key 0x3b00
 #define F2_Key 0x3c00
 #define F3_Key 0x3d00
@@ -22,15 +29,6 @@
 #define F8_Key 0x4200
 #define F9_Key 0x4300
 #define F10_Key 0x4400
-
-#include <iostream>
-#include <string>
-#ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN
-#define VC_EXTRALEAN
-#include <Windows.h> // for displaying colors
-#endif               // Windows
-using namespace std;
 
 #define color_black 0
 #define color_dark_blue 1
@@ -48,6 +46,11 @@ using namespace std;
 #define color_pink 13
 #define color_yellow 14
 #define color_white 15
+
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#define VC_EXTRALEAN
+#endif
 
 string get_textcolor_code(const int textcolor)
 { // Linux only
@@ -196,8 +199,10 @@ void print_no_reset(const string &s, const int textcolor, const int backgroundco
     cout << s;
 }
 // inja baray declear
+void playground(int **table, int l, int x, int y);
 bool make_path(int **path, int xx, int yy, int l, int x, int y, int **table, int maxv, int minv, int maxb, int minb);
 bool is_on_the_path(int **path, int xx, int yy, int l);
+void output_list(int i);
 bool gandz(int **path, int xx, int yy, int l, int x, int y, int uc, int rc, int dc, int lc);
 bool gand(int **path, int xx, int yy, int l, int x, int y)
 {
@@ -258,6 +263,17 @@ void clean()
 // output map
 void map_output(int x, int y, int **table, int xx, int yy, int **path, int l)
 {
+    int max_l = to_string(table[0][0]).size();
+    for (int i = 0; i < x; i++)
+    {
+        for (int j = 0; j < y; j++)
+        {
+            if (to_string(table[i][j]).size() > max_l)
+            {
+                max_l = to_string(table[i][j]).size();
+            }
+        }
+    }
 
     for (int i = 0; i < x * 2 + 1; i++)
     {
@@ -281,6 +297,21 @@ void map_output(int x, int y, int **table, int xx, int yy, int **path, int l)
                 }
                 else
                 {
+                    bool flag2 = 1;
+                    string out = to_string(table[(i - 1) / 2][(j - 1) / 2]);
+                    while (out.size() < max_l)
+                    {
+                        if (flag2)
+                        {
+                            out = out + ' ';
+                            flag2 = 0;
+                        }
+                        else
+                        {
+                            out = ' ' + out;
+                            flag2 = 1;
+                        }
+                    }
 
                     bool flag = 1;
                     for (size_t h = 0; h < l; h++)
@@ -288,37 +319,28 @@ void map_output(int x, int y, int **table, int xx, int yy, int **path, int l)
                         if (path[h][0] == (i - 1) / 2 && path[h][1] == (j - 1) / 2)
                         {
                             flag = 0;
-                            print(to_string(table[(i - 1) / 2][(j - 1) / 2]), color_green, color_black);
+                            print(out, color_green, color_black);
                         }
                     }
 
                     if ((i - 1) / 2 == xx && (j - 1) / 2 == yy)
                     {
-                        print(to_string(table[(i - 1) / 2][(j - 1) / 2]), color_pink, color_black);
+                        print(out, color_pink, color_black);
                     }
                     else if (table[(i - 1) / 2][(j - 1) / 2] == 0)
                     {
-                        print(to_string(table[(i - 1) / 2][(j - 1) / 2]), color_red, color_black);
+                        print(out, color_red, color_black);
                     }
                     else if (flag == 1)
                     {
-                        print(to_string(table[(i - 1) / 2][(j - 1) / 2]), color_white, color_black);
+                        print(out, color_white, color_black);
                     }
-                    // if(color ==2){
-                    // print(to_string(table[(i-1)/2][(j-1)/2]), color_blue, color_black);
-                    // }
-                    // if(color ==3){
-                    // print(to_string(table[(i-1)/2][(j-1)/2]), color_gray, color_black);
-                    // }
-                    // if(color ==4){
-                    // print(to_string(table[(i-1)/2][(j-1)/2]), color_green, color_black);
-                    // }
                 }
             }
         }
         else
         {
-            for (int j = 0; j < y * 6 + 1; j++)
+            for (int j = 0; j < y * (5+max_l) + 1; j++)
             {
                 cout << "-";
             }
@@ -326,50 +348,151 @@ void map_output(int x, int y, int **table, int xx, int yy, int **path, int l)
     }
 }
 
-int main()
+string map_save(int x, int y, int **table, int xx, int yy, int **path, int l)
 {
+    string s;
+    for (int i = 0; i < x * 2 + 1; i++)
+    {
+        s += "\n";
+
+        if (i % 2 != 0)
+        {
+
+            for (int j = 0; j < y * 2 + 1; j++)
+            {
+                if (j % 2 == 0)
+                {
+                    if (j == 0)
+                    {
+                        s += "|  ";
+                    }
+                    else
+                    {
+                        s += "  |  ";
+                    }
+                }
+                else
+                {
+
+                    bool flag = 1;
+                    for (size_t h = 0; h < l; h++)
+                    {
+                        if (path[h][0] == (i - 1) / 2 && path[h][1] == (j - 1) / 2)
+                        {
+                            flag = 0;
+                            s += to_string(table[(i - 1) / 2][(j - 1) / 2]);
+                        }
+                    }
+
+                    if ((i - 1) / 2 == xx && (j - 1) / 2 == yy)
+                    {
+                        s += to_string(table[(i - 1) / 2][(j - 1) / 2]);
+                    }
+                    else if (table[(i - 1) / 2][(j - 1) / 2] == 0)
+                    {
+                        s += to_string(table[(i - 1) / 2][(j - 1) / 2]);
+                    }
+                    else if (flag == 1)
+                    {
+                        s += to_string(table[(i - 1) / 2][(j - 1) / 2]);
+                    }
+                }
+            }
+        }
+        else
+        {
+            for (int j = 0; j < y * 6 + 1; j++)
+            {
+                s += "-";
+            }
+        }
+    }
+    return s;
+}
+
+void create_map(string s)
+{
+    char q;
     int x, y, l;
     int xx = 0, yy = 0;
     int max_value, min_value, max_block, min_block;
-
+    string map;
 
     cout << "Enter number of lines : ";
     cin >> x;
+    // cin>>x;
     cout << "Enter number of columns : ";
     cin >> y;
-    cout << "Enter length of the path : ";
-    cin >> l;
-    cout << "Enter minimum value of table : ";
-    cin >> min_value;
-    cout << "Enter maximum value of table : ";
-    cin >> max_value;
-    cout << "Enter minimum number of blocks : ";
-    cin >> min_block;
-    cout << "Enter maximum number of blocks : ";
-    cin >> max_block;
-
-    if((x+y)%2!=l%2){
-        cerr<<"invalid path length";
-        exit(0);
+    if (s != "Easy")
+    {
+        cout << "Enter lengtsh of the path : ";
+        cin >> l;
+        cout << "Enter minimum value of table : ";
+        cin >> min_value;
+        cout << "Enter maximum value of table : ";
+        cin >> max_value;
+        cout << "Enter minimum number of blocks : ";
+        cin >> min_block;
+        cout << "Enter maximum number of blocks : ";
+        cin >> max_block;
     }
-    if(l>x*y-1){
-        cerr<<"invalid path length";
-        exit(0);
+    else
+    {
+        l = x + y - 2;
+        min_value = -3;
+        max_value = 3;
+        min_block = 2;
+        max_block = 5;
     }
-    if(l<x+y-2){
-        cerr<<"invalid path length";
-        exit(0);
+    if ((x + y) % 2 != l % 2)
+    {
+        cerr << "invalid path length";
+        cout << "\npress any key to continue";
+        q = getch();
+        return;
     }
-    if(l+min_block+1>x*y){
-        cerr<<"invalid path length";
-        exit(0);
+    if (l > x * y - 1)
+    {
+        cerr << "invalid path length";
+        cout << "\npress any key to continue";
+        q = getch();
+        return;
     }
-
-
-
-
-
-
+    if (l < x + y - 2)
+    {
+        cerr << "invalid path length";
+        cout << "\npress any key to continue";
+        q = getch();
+        return;
+    }
+    if (l + min_block + 1 > x * y)
+    {
+        cerr << "invalid path length";
+        cout << "\npress any key to continue";
+        q = getch();
+        return;
+    }
+    if (min_block > max_block)
+    {
+        cerr << "invalid minimum and maximum blocks!!";
+        cout << "\npress any key to continue";
+        q = getch();
+        return;
+    }
+    if (min_block < 0)
+    {
+        cerr << "invalid minimum block!!";
+        cout << "\npress any key to continue";
+        q = getch();
+        return;
+    }
+    if (min_value > max_value)
+    {
+        cerr << "invalid minimum and maximum values!!";
+        cout << "\npress any key to continue";
+        q = getch();
+        return;
+    }
 
     int **path = new int *[l];
     for (int i = 0; i < l; i++)
@@ -392,8 +515,138 @@ int main()
     }
 
     make_path(path, xx, yy, l, x, y, table, max_value, min_value, max_block, min_block);
+    map = map_save(x, y, table, xx, yy, path, l);
+    string name, addres;
 
-    map_output(x, y, table, xx, yy, path, l);
+    cout << "Map creation was successful\nPlease enter a name for your map : ";
+    cin >> name;
+
+    cout << "Your map has been saved as " << s << '_' << name;
+    addres = (char)92 + s + '_' + name + '.' + "txt";
+    addres = "Maps" + addres;
+    // cout << name;
+    ofstream A(addres);
+    A << map;
+    A << "\nmap name : " << name;
+    A << "\nmap level : " << s;
+    A << "\npath length : " << l;
+
+    A.close();
+    cout << "\npress any key to continue";
+    q = getch();
+}
+
+void read_file(string s)
+{
+
+    bool flag = 1;
+    char q;
+    string t;
+    int x = 0, y = -1, l;
+    ifstream A(s);
+    if (A.fail() == 1)
+    {
+        cerr << "Invalid address";
+        cout << "\npress any key to continue";
+        q = getch();
+        return;
+    }
+    while (1)
+    {
+        getline(A, t);
+
+        if (t[0] == '|')
+        {
+            x++;
+            if (flag == 1)
+            {
+                for (int i = 0; i < t.size(); i++)
+                {
+                    if (t[i] == '|')
+                    {
+                        y++;
+                    }
+                }
+                flag = 0;
+            }
+        }
+        if (t[0] == 'm')
+        {
+            getline(A, t);
+            A >> t >> t >> t >> l;
+
+            break;
+        }
+    }
+
+    A.close();
+    ifstream B(s);
+    int **table = new int *[x];
+    for (int i = 0; i < x; i++)
+    {
+        *(table + i) = new int[y];
+        for (int j = 0; j < y; j++)
+        {
+            table[i][j] = 0;
+        }
+    }
+    // cout<<l;
+    int i = 0, j = 0, ii = 0, jj = 0;
+    string temp;
+    while (ii != x)
+    {
+        getline(B, t);
+
+        if (t[0] == '|')
+        {
+            while (j != t.size())
+            {
+                if (t[j] == '|')
+                {
+                }
+                else if (t[j] == ' ')
+                {
+                    if (isdigit(t[j - 1]) == 1)
+                    {
+                        // cout<<"\n"<<temp;
+                        table[ii][jj] = stoi(temp);
+                        temp = "";
+                        jj++;
+                    }
+                }
+                else
+                {
+                    temp += t[j];
+                }
+                j++;
+            }
+
+            ii++;
+        }
+        jj = 0;
+        j = 0;
+        i += 2;
+    }
+
+    B.close();
+
+    playground(table, l, x, y);
+}
+void playground(int **table, int l, int x, int y)
+{
+    char q;
+    int xx = 0, yy = 0;
+    int **path = new int *[l];
+    for (int i = 0; i < l; i++)
+    {
+        *(path + i) = new int[2];
+        for (int j = 0; j < 2; j++)
+        {
+            path[i][j] = x;
+        }
+    }
+
+    auto start = chrono::steady_clock::now();
 
     for (int i = 0; i < l; i++)
     {
@@ -402,17 +655,14 @@ int main()
             path[i][j] = x;
         }
     }
-    // exit(0);
-    // int** t=new int* [x];
 
     map_output(x, y, table, xx, yy, path, l);
-    char q;
     int sum = table[0][0];
     for (size_t i = 0; i < l;)
     {
-        if (gand(path, xx, yy, l, x, y))
+        if ((is_on_the_path(path, xx + 1, yy, l) || xx + 1 >= x || table[xx + 1][yy] == 0) && (is_on_the_path(path, xx - 1, yy, l) || xx - 1 < 0 || table[xx - 1][yy] == 0) && (is_on_the_path(path, xx, yy + 1, l) || yy + 1 >= y || table[xx][yy + 1] == 0) && (is_on_the_path(path, xx, yy - 1, l) || yy - 1 < 0 || table[xx][yy - 1] == 0))
         {
-            cout << "\ngand zadi!!";
+            print("\nyou lost!!\n", color_red, color_black);
             break;
         }
         q = getch();
@@ -461,18 +711,26 @@ int main()
         }
         if ((xx == x - 1 && yy == y - 1) || (i == l))
         {
+            auto end = chrono::steady_clock::now();
+            auto diff = end - start;
             if (i == l && sum / 2 == table[x - 1][y - 1])
             {
-                cout << "\nyou won";
+                cout << "\n";
+                print("you won!!", color_green, color_black);
             }
             else
             {
-                cout << "\nyou lost";
+                print("\nyou lost!!", color_red, color_black);
+                cout << "\nYour sum : " << sum - table[x - 1][y - 1];
             }
+            cout << "\ntime spending: " << fixed << setprecision(2) << chrono::duration<double>(diff).count() << " s" << endl;
+
             break;
         }
         cout << "\nyour path sum : " << sum;
     }
+    cout << "press any key to continue";
+    q = getch();
 }
 
 bool is_on_the_path(int **path, int xx, int yy, int l)
@@ -528,11 +786,6 @@ inja:
         }
     }
 
-    // print(to_string(uc),color_light_blue,color_black);
-    // print(to_string(rc),color_light_blue,color_black);
-    // print(to_string(dc),color_light_blue,color_black);
-    // print(to_string(lc),color_light_blue,color_black);
-
     for (size_t i = 0; i < l; i++)
     {
         path[i][0] = 0;
@@ -543,11 +796,9 @@ inja:
     while (true)
     {
         int najafi = rand() % 4;
-        // cout<<najafi;
         r = 0;
         if (najafi == 0 && uc > 0 && xx - 1 >= 0 && !is_on_the_path(path, xx - 1, yy, l))
         {
-            //   print(to_string(najafi),color_blue,color_black);
             xx = xx - 1;
             path[h][0] = xx;
             path[h][1] = yy;
@@ -557,7 +808,7 @@ inja:
         }
         else if (najafi == 1 && rc > 0 && yy + 1 < y && !is_on_the_path(path, xx, yy + 1, l))
         {
-            // print(to_string(najafi),color_blue,color_black);
+
             yy = yy + 1;
             path[h][0] = xx;
             path[h][1] = yy;
@@ -567,7 +818,6 @@ inja:
         }
         else if (najafi == 2 && dc > 0 && xx + 1 < x && !is_on_the_path(path, xx + 1, yy, l))
         {
-            //   print(to_string(najafi),color_blue,color_black);
             xx = xx + 1;
             path[h][0] = xx;
             path[h][1] = yy;
@@ -577,7 +827,6 @@ inja:
         }
         else if (najafi == 3 && lc > 0 && yy - 1 >= 0 && !is_on_the_path(path, xx, yy - 1, l))
         {
-            //    print(to_string(najafi),color_blue,color_black);
             yy = yy - 1;
             path[h][0] = xx;
             path[h][1] = yy;
@@ -590,7 +839,6 @@ inja:
         }
         if (gandz(path, xx, yy, l, x, y, uc, rc, dc, lc))
         {
-            // cout<<"khar:"<<xx<<yy<<"\n"<<uc<<rc<<dc<<lc<<"\n\n";
             goto inja;
         }
     }
@@ -650,9 +898,9 @@ inja:
             r = minb;
         }
 
-
-        if(r+l+1>x*y){
-            r=0;
+        if (r + l + 1 > x * y)
+        {
+            r = 0;
         }
     }
     int nb = r, e;
@@ -675,5 +923,223 @@ bool gandz(int **path, int xx, int yy, int l, int x, int y, int uc, int rc, int 
     {
         return 1;
     }
+    return 0;
+}
+
+void menu(int n)
+{
+    print("1. ", color_red, color_black);
+    cout << "Create a New Map\n";
+    print("  -1.1 ", color_red, color_black);
+    if (n == 1)
+    {
+        print("  Easy\n", color_green, color_black);
+    }
+    else
+    {
+        print("  Easy\n", color_white, color_black);
+    }
+    print("  -1.2 ", color_red, color_black);
+    if (n == 2)
+    {
+        print("  Hard\n", color_green, color_black);
+    }
+    else
+    {
+        print("  Hard\n", color_white, color_black);
+    }
+    print("2. ", color_red, color_black);
+    cout << "Playground\n";
+    print("  -2.1 ", color_red, color_black);
+    if (n == 3)
+    {
+        print("  Choose from Existing Maps\n", color_green, color_black);
+    }
+    else
+    {
+        print("  Choose from Existing Maps\n", color_white, color_black);
+    }
+    print("  -2.2 ", color_red, color_black);
+    if (n == 4)
+    {
+        print("  Import a Custom Map\n", color_green, color_black);
+    }
+    else
+    {
+        print("  Import a Custom Map\n", color_white, color_black);
+    }
+    print("3. ", color_red, color_black);
+    cout << "Solve a Maze\n";
+    print("  -3.1 ", color_red, color_black);
+    if (n == 5)
+    {
+        print("  Choose from Existing Maps\n", color_green, color_black);
+    }
+    else
+    {
+        print("  Choose from Existing Maps\n", color_white, color_black);
+    }
+    print("  -3.2 ", color_red, color_black);
+    if (n == 6)
+    {
+        print("  Import a Custom Map\n", color_green, color_black);
+    }
+    else
+    {
+        print("  Import a Custom Map\n", color_white, color_black);
+    }
+    print("4. ", color_red, color_black);
+    if (n == 7)
+    {
+        print("History\n", color_green, color_black);
+    }
+    else
+    {
+        print("History\n", color_white, color_black);
+    }
+    print("5. ", color_red, color_black);
+    if (n == 8)
+    {
+        print("Leaderboard\n", color_green, color_black);
+    }
+    else
+    {
+        print("Leaderboard\n", color_white, color_black);
+    }
+    print("6. ", color_red, color_black);
+    if (n == 9)
+    {
+        print("Exit\n", color_green, color_black);
+    }
+    else
+    {
+        print("Exit\n", color_white, color_black);
+    }
+}
+vector<pair<int, string>> ps;
+void select_file()
+{
+    int index;
+    string s;
+    std::string path = "C:\\Users\\asus\\Desktop\\project\\Maze_Maverick\\Maps";
+    int i = 0;
+    while (i != ps.size())
+    {
+        ps.pop_back();
+    }
+
+    struct stat sb;
+    int iii = 0;
+    for (const auto &entry : fs::directory_iterator(path))
+    {
+        iii++;
+        filesystem::path outfilename = entry.path();
+        string outfilename_str = outfilename.string();
+        const char *path = outfilename_str.c_str();
+        if (stat(path, &sb) == 0 && !(sb.st_mode & S_IFDIR))
+        {
+            index = outfilename_str.find("Maps");
+            s = outfilename_str.substr(index + 5);
+            ps.push_back(make_pair(iii, s));
+        }
+    }
+    i = 0;
+    output_list(0);
+    char q = 'm';
+
+    while ((int)q != 13)
+    {
+        q = getch();
+        if ((int)q == 72 && i - 1 >= 0)
+        {
+            i--;
+        }
+        else if ((int)q == 80 && (i + 1) < iii)
+        {
+            i++;
+        }
+
+        clean();
+
+        output_list(i);
+    }
+
+    string f = "";
+    f = "Maps";
+    f = f + (char)92;
+    f = f + ps[i].second;
+    clean();
+    read_file(f);
+}
+
+void output_list(int i)
+{
+    int ii = 0;
+    while (ii != ps.size())
+    {
+
+        if (i == ii)
+        {
+            print(ps[ii].second, color_green, color_black);
+            cout << "\n";
+        }
+        else
+        {
+            cout << ps[ii].second << "\n";
+        }
+        ii++;
+    }
+}
+int main()
+{
+    string ad;
+    cout << "Welcome to Maze Maverick\n";
+    char q;
+    int x = 1;
+    menu(1);
+    while (true)
+    {
+        q = getch();
+        clean();
+        if ((int)q == 72 && x - 1 > 0)
+        {
+            x--;
+        }
+        else if ((int)q == 80 && (x + 1) <= 9)
+        {
+            x++;
+        }
+        else if ((int)q == 13)
+        {
+            if (x == 1)
+            {
+                create_map("Easy");
+            }
+            if (x == 2)
+            {
+                create_map("Hard");
+            }
+            if (x == 3)
+            {
+                select_file();
+            }
+            if (x == 4)
+            {
+                cin >> ad;
+                read_file(ad);
+            }
+            if (x == 9)
+            {
+                exit(0);
+            }
+            x = 1;
+            clean();
+        }
+        else
+        {
+        }
+        menu(x);
+    }
+
     return 0;
 }
