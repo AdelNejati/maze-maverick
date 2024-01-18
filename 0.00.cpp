@@ -196,6 +196,7 @@ void print_no_reset(const string &s, const int textcolor, const int backgroundco
     cout << s;
 }
 // inja baray declear
+void playground(int **table, int l, int x, int y);
 bool make_path(int **path, int xx, int yy, int l, int x, int y, int **table, int maxv, int minv, int maxb, int minb);
 bool is_on_the_path(int **path, int xx, int yy, int l);
 bool gandz(int **path, int xx, int yy, int l, int x, int y, int uc, int rc, int dc, int lc);
@@ -326,20 +327,12 @@ void map_output(int x, int y, int **table, int xx, int yy, int **path, int l)
     }
 }
 
-
-
-
-
-
-
-
-
 string map_save(int x, int y, int **table, int xx, int yy, int **path, int l)
 {
     string s;
     for (int i = 0; i < x * 2 + 1; i++)
     {
-        s+= "\n";
+        s += "\n";
 
         if (i % 2 != 0)
         {
@@ -350,11 +343,11 @@ string map_save(int x, int y, int **table, int xx, int yy, int **path, int l)
                 {
                     if (j == 0)
                     {
-                        s+= "|  ";
+                        s += "|  ";
                     }
                     else
                     {
-                        s+="  |  ";
+                        s += "  |  ";
                     }
                 }
                 else
@@ -367,24 +360,24 @@ string map_save(int x, int y, int **table, int xx, int yy, int **path, int l)
                         {
                             flag = 0;
                             // print(to_string(table[(i - 1) / 2][(j - 1) / 2]), color_green, color_black);
-                            s+=to_string(table[(i - 1) / 2][(j - 1) / 2]);
+                            s += to_string(table[(i - 1) / 2][(j - 1) / 2]);
                         }
                     }
 
                     if ((i - 1) / 2 == xx && (j - 1) / 2 == yy)
                     {
                         // print(to_string(table[(i - 1) / 2][(j - 1) / 2]), color_pink, color_black);
-                            s+=to_string(table[(i - 1) / 2][(j - 1) / 2]);
+                        s += to_string(table[(i - 1) / 2][(j - 1) / 2]);
                     }
                     else if (table[(i - 1) / 2][(j - 1) / 2] == 0)
                     {
                         // print(to_string(table[(i - 1) / 2][(j - 1) / 2]), color_red, color_black);/
-                            s+=to_string(table[(i - 1) / 2][(j - 1) / 2]);
+                        s += to_string(table[(i - 1) / 2][(j - 1) / 2]);
                     }
                     else if (flag == 1)
                     {
                         // print(to_string(table[(i - 1) / 2][(j - 1) / 2]), color_white, color_black);
-                            s+=to_string(table[(i - 1) / 2][(j - 1) / 2]);
+                        s += to_string(table[(i - 1) / 2][(j - 1) / 2]);
                     }
                     // if(color ==2){
                     // print(to_string(table[(i-1)/2][(j-1)/2]), color_blue, color_black);
@@ -402,18 +395,12 @@ string map_save(int x, int y, int **table, int xx, int yy, int **path, int l)
         {
             for (int j = 0; j < y * 6 + 1; j++)
             {
-                s+="-";
+                s += "-";
             }
         }
     }
     return s;
-
 }
-
-
-
-
-
 
 void create_map(string s)
 {
@@ -451,49 +438,49 @@ void create_map(string s)
     if ((x + y) % 2 != l % 2)
     {
         cerr << "invalid path length";
-                cout << "\npress any key to continue";
+        cout << "\npress any key to continue";
         q = getch();
         return;
     }
     if (l > x * y - 1)
     {
         cerr << "invalid path length";
-                cout << "\npress any key to continue";
+        cout << "\npress any key to continue";
         q = getch();
         return;
     }
     if (l < x + y - 2)
     {
         cerr << "invalid path length";
-                cout << "\npress any key to continue";
+        cout << "\npress any key to continue";
         q = getch();
         return;
     }
     if (l + min_block + 1 > x * y)
     {
         cerr << "invalid path length";
-                cout << "\npress any key to continue";
+        cout << "\npress any key to continue";
         q = getch();
         return;
     }
     if (min_block > max_block)
     {
         cerr << "invalid minimum and maximum blocks!!";
-                cout << "\npress any key to continue";
+        cout << "\npress any key to continue";
         q = getch();
         return;
     }
     if (min_block < 0)
     {
         cerr << "invalid minimum block!!";
-                cout << "\npress any key to continue";
+        cout << "\npress any key to continue";
         q = getch();
         return;
     }
     if (min_value > max_value)
     {
         cerr << "invalid minimum and maximum values!!";
-                cout << "\npress any key to continue";
+        cout << "\npress any key to continue";
         q = getch();
         return;
     }
@@ -519,33 +506,136 @@ void create_map(string s)
     }
 
     make_path(path, xx, yy, l, x, y, table, max_value, min_value, max_block, min_block);
-    map= map_save(x, y, table, xx, yy, path, l);
-    string name,addres;
+    map = map_save(x, y, table, xx, yy, path, l);
+    string name, addres;
 
-        cout << "Map creation was successful\nPlease enter a name for your map : ";
-        cin >> name;
+    cout << "Map creation was successful\nPlease enter a name for your map : ";
+    cin >> name;
 
-        cout << "Your map has been saved as " << s<<'_'<<name << "\npress any key to continue";
-        addres = (char)92 +s+'_'+ name +'.' + "txt";
-        addres = "Maps" +addres;
-        // cout << name;
-        ofstream A(addres);
-        A << map;
-        A<<"\nmap name : "<< name;
-        A<<"\nmap level : "<<s;
-        A.close();
-        cout << "\npress any key to continue";
-        q = getch();
+    cout << "Your map has been saved as " << s << '_' << name << "\npress any key to continue";
+    addres = (char)92 + s + '_' + name + '.' + "txt";
+    addres = "Maps" + addres;
+    // cout << name;
+    ofstream A(addres);
+    A << map;
+    A << "\nmap name : " << name;
+    A << "\nmap level : " << s;
+    A << "\npath length : " << l;
 
-    
+    A.close();
+    cout << "\npress any key to continue";
+    q = getch();
 }
 
-void playground(int **table)
+void read_file(string s)
+{
+
+    bool flag = 1;
+    char q;
+    string t;
+    int x = 0, y = -1, l;
+    ifstream A(s);
+    if (A.fail() == 1)
+    {
+        cerr << "Invalid address";
+        cout << "\npress any key to continue";
+        q = getch();
+        return;
+    }
+    while (1)
+    {
+        getline(A, t);
+
+        if (t[0] == '|')
+        {
+            x++;
+            if (flag == 1)
+            {
+                for (int i = 0; i < t.size(); i++)
+                {
+                    if (t[i] == '|')
+                    {
+                        y++;
+                    }
+                }
+                flag = 0;
+            }
+        }
+        if (t[0] == 'm')
+        {
+            getline(A, t);
+            A >> t >> t >> t >> l;
+
+            break;
+        }
+    }
+
+    A.close();
+    ifstream B(s);
+    int **table = new int *[x];
+    for (int i = 0; i < x; i++)
+    {
+        *(table + i) = new int[y];
+        for (int j = 0; j < y; j++)
+        {
+            table[i][j] = 0;
+        }
+    }
+    // cout<<l;
+    int i = 0, j = 0, ii = 0, jj = 0;
+    string temp;
+    while (ii != x)
+    {
+        getline(B, t);
+
+        if (t[0] == '|')
+        {
+            // cout<<t;
+            while (j != t.size())
+            {
+                if (t[j] == '|')
+                {
+                }
+                else if (t[j] == ' ')
+                {
+                    if (isdigit(t[j - 1]) == 1)
+                    {
+                        // cout<<"\n"<<temp;
+                        table[ii][jj] = stoi(temp);
+                        temp = "";
+                        jj++;
+                    }
+                }
+                else
+                {
+                    temp += t[j];
+                }
+                j++;
+            }
+
+            ii++;
+        }
+        jj = 0;
+        j = 0;
+        i += 2;
+    }
+    // for(int i = 0 ; i < x ; i++){
+    //     for(int j = 0 ; j < y ; j++){
+    //         cout << table[i][j] << "\t";
+    //     }
+    //     cout << endl;
+    // }
+    B.close();
+
+    playground(table, l, x, y);
+
+    cout << "\npress any key to continue";
+    q = getch();
+}
+void playground(int **table, int l, int x, int y)
 {
     char q;
-    int x, y, l;
     int xx = 0, yy = 0;
-    int max_value, min_value, max_block, min_block;
     int **path = new int *[l];
     for (int i = 0; i < l; i++)
     {
@@ -567,7 +657,7 @@ void playground(int **table)
     // }
     auto start = chrono::steady_clock::now();
 
-    map_output(x, y, table, xx, yy, path, l);
+    // map_output(x, y, table, xx, yy, path, l);
 
     for (int i = 0; i < l; i++)
     {
@@ -951,12 +1041,14 @@ void menu(int n)
 int main()
 {
     // playground();
+    string ad;
     cout << "Welcome to Maze Maverick\n";
     char q;
     int x = 1;
     menu(1);
     while (true)
     {
+
         q = getch();
         clean();
         // cout << (int)q;
@@ -980,14 +1072,16 @@ int main()
             {
                 create_map("Hard");
             }
-            // if (x == 3)
-            // {
-            //     playground();
-            // }
-            // if (x == 4)
-            // {
-            //     playground();
-            // }
+            if (x == 3)
+            {
+
+                // read_file(ad);/
+            }
+            if (x == 4)
+            {
+                cin >> ad;
+                read_file(ad);
+            }
             // if(x == 5){
             //         playground();
             // }
@@ -1000,9 +1094,10 @@ int main()
             // if(x == 8){
             //         playground();
             // }
-            // if(x == 9){
-            //         playground();
-            // }
+            if (x == 9)
+            {
+                exit(0);
+            }
             x = 1;
             clean();
         }
