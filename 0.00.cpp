@@ -204,6 +204,7 @@ bool make_path(int **path, int xx, int yy, int l, int x, int y, int **table, int
 bool is_on_the_path(int **path, int xx, int yy, int l);
 void output_list(int i);
 bool gandz(int **path, int xx, int yy, int l, int x, int y, int uc, int rc, int dc, int lc);
+void find(int **table, int l, int x, int y, int xx, int yy, int i, int **path, int sum);
 bool gand(int **path, int xx, int yy, int l, int x, int y)
 {
     if ((is_on_the_path(path, xx + 1, yy, l) || xx + 1 >= x) && (is_on_the_path(path, xx - 1, yy, l) || xx - 1 < 0) && (is_on_the_path(path, xx, yy + 1, l) || yy + 1 >= y) && (is_on_the_path(path, xx, yy - 1, l) || yy - 1 < 0))
@@ -327,8 +328,9 @@ void map_output(int x, int y, int **table, int xx, int yy, int **path, int l)
                     {
                         print(out, color_pink, color_black);
                     }
-                    else if (table[(i - 1) / 2][(j - 1) / 2] == 0)
+                    else if (table[(i - 1) / 2][(j - 1) / 2] == 0&&((i-1)/2!=x-1||(j-1)/2!=y-1))
                     {
+                        // cout<<x<<y;
                         print(out, color_red, color_black);
                     }
                     else if (flag == 1)
@@ -340,7 +342,7 @@ void map_output(int x, int y, int **table, int xx, int yy, int **path, int l)
         }
         else
         {
-            for (int j = 0; j < y * (5+max_l) + 1; j++)
+            for (int j = 0; j < y * (5 + max_l) + 1; j++)
             {
                 cout << "-";
             }
@@ -536,7 +538,7 @@ void create_map(string s)
     q = getch();
 }
 
-void read_file(string s)
+void read_file(string s, string ss)
 {
 
     bool flag = 1;
@@ -629,8 +631,23 @@ void read_file(string s)
     }
 
     B.close();
-
-    playground(table, l, x, y);
+    if (ss == "find")
+    {
+        int **path = new int *[l];
+        for (int i = 0; i < l; i++)
+        {
+            *(path + i) = new int[2];
+            for (int j = 0; j < 2; j++)
+            {
+                path[i][j] = x;
+            }
+        }
+        find(table, l, x, y, 0, 0, 0, path, table[0][0]);
+    }
+    if (ss == "play")
+    {
+        playground(table, l, x, y);
+    }
 }
 void playground(int **table, int l, int x, int y)
 {
@@ -655,12 +672,15 @@ void playground(int **table, int l, int x, int y)
             path[i][j] = x;
         }
     }
-
     map_output(x, y, table, xx, yy, path, l);
+
     int sum = table[0][0];
     for (size_t i = 0; i < l;)
     {
-        if ((is_on_the_path(path, xx + 1, yy, l) || xx + 1 >= x || table[xx + 1][yy] == 0) && (is_on_the_path(path, xx - 1, yy, l) || xx - 1 < 0 || table[xx - 1][yy] == 0) && (is_on_the_path(path, xx, yy + 1, l) || yy + 1 >= y || table[xx][yy + 1] == 0) && (is_on_the_path(path, xx, yy - 1, l) || yy - 1 < 0 || table[xx][yy - 1] == 0))
+        cout << "\nyour path sum : " << sum;
+        cout << "\nYour Path length : " << i;
+        cout << "\nTarget Path length : " << l;
+        if ((is_on_the_path(path, xx + 1, yy, l) || xx + 1 >= x ||( table[xx + 1][yy] == 0 &&xx!=x-1&&yy!=y-1)) && (is_on_the_path(path, xx - 1, yy, l) || xx - 1 < 0 || (table[xx - 1][yy] == 0 &&xx!=x-1&&yy!=y-1)) && (is_on_the_path(path, xx, yy + 1, l) || yy + 1 >= y || (table[xx][yy + 1] == 0 &&xx!=x-1&&yy!=y-1)) && (is_on_the_path(path, xx, yy - 1, l) || yy - 1 < 0 || (table[xx][yy - 1] == 0 &&xx!=x-1&&yy!=y-1)))
         {
             print("\nyou lost!!\n", color_red, color_black);
             break;
@@ -668,7 +688,7 @@ void playground(int **table, int l, int x, int y)
         q = getch();
         clean();
         // cout<<int(q);
-        if ((int)q == 72 && xx - 1 >= 0 && !is_on_the_path(path, xx - 1, yy, l) && table[xx - 1][yy] != 0)
+        if ((int)q == 72 && xx - 1 >= 0 && !is_on_the_path(path, xx - 1, yy, l) && (table[xx - 1][yy] != 0 || (xx -1== x - 1 && yy == y - 1)))
         {
             path[i][0] = xx;
             path[i][1] = yy;
@@ -677,7 +697,7 @@ void playground(int **table, int l, int x, int y)
             sum += table[xx][yy];
             i++;
         }
-        else if ((int)q == 80 && (xx + 1) < x && !is_on_the_path(path, xx + 1, yy, l) && table[xx + 1][yy] != 0)
+        else if ((int)q == 80 && (xx + 1) < x && !is_on_the_path(path, xx + 1, yy, l) && (table[xx + 1][yy] != 0 || (xx+1 == x - 1 && yy == y - 1)))
         {
             path[i][0] = xx;
             path[i][1] = yy;
@@ -686,7 +706,7 @@ void playground(int **table, int l, int x, int y)
             sum += table[xx][yy];
             i++;
         }
-        else if ((int)q == 77 && yy + 1 < y && !is_on_the_path(path, xx, yy + 1, l) && table[xx][yy + 1] != 0)
+        else if ((int)q == 77 && yy + 1 < y && !is_on_the_path(path, xx, yy + 1, l) && (table[xx][yy + 1] != 0 || (xx == x - 1 && yy+1 == y - 1)))
         {
             path[i][0] = xx;
             path[i][1] = yy;
@@ -695,7 +715,7 @@ void playground(int **table, int l, int x, int y)
             sum += table[xx][yy];
             i++;
         }
-        else if ((int)q == 75 && yy - 1 >= 0 && !is_on_the_path(path, xx, yy - 1, l) && table[xx][yy - 1] != 0)
+        else if ((int)q == 75 && yy - 1 >= 0 && !is_on_the_path(path, xx, yy - 1, l) && (table[xx][yy - 1] != 0 || (xx == x - 1 && yy-1 == y - 1)))
         {
             path[i][0] = xx;
             path[i][1] = yy;
@@ -706,6 +726,7 @@ void playground(int **table, int l, int x, int y)
         }
         else
         {
+
             map_output(x, y, table, xx, yy, path, l);
             print("\nInvalid move!!\nPlease try again", color_red, color_black);
         }
@@ -716,18 +737,20 @@ void playground(int **table, int l, int x, int y)
             if (i == l && sum / 2 == table[x - 1][y - 1])
             {
                 cout << "\n";
-                print("you won!!", color_green, color_black);
+                print("YOU WON!!", color_green, color_black);
+                cout << "\nYour sum : " << sum - table[x - 1][y - 1];
+                cout << "\nYour path length : " << i;
             }
             else
             {
-                print("\nyou lost!!", color_red, color_black);
+                print("\nYOU LOST!!", color_red, color_black);
                 cout << "\nYour sum : " << sum - table[x - 1][y - 1];
+                cout << "\nYour path length : " << i;
             }
-            cout << "\ntime spending: " << fixed << setprecision(2) << chrono::duration<double>(diff).count() << " s" << endl;
+            cout << "\nTime spending: " << fixed << setprecision(2) << chrono::duration<double>(diff).count() << " s" << endl;
 
             break;
         }
-        cout << "\nyour path sum : " << sum;
     }
     cout << "press any key to continue";
     q = getch();
@@ -1017,11 +1040,11 @@ void menu(int n)
     }
 }
 vector<pair<int, string>> ps;
-void select_file()
+void select_file(string ss)
 {
     int index;
     string s;
-    std::string path = "C:\\Users\\asus\\Desktop\\project\\Maze_Maverick\\Maps";
+    std::string path = "C:\\Users\\ASUS\\Desktop\\project bp\\Maps";
     int i = 0;
     while (i != ps.size())
     {
@@ -1069,7 +1092,14 @@ void select_file()
     f = f + (char)92;
     f = f + ps[i].second;
     clean();
-    read_file(f);
+    if (ss == "find")
+    {
+        read_file(f, "find");
+    }
+    if (ss == "play")
+    {
+        read_file(f, "play");
+    }
 }
 
 void output_list(int i)
@@ -1121,12 +1151,29 @@ int main()
             }
             if (x == 3)
             {
-                select_file();
+                select_file("play");
             }
             if (x == 4)
             {
                 cin >> ad;
-                read_file(ad);
+                read_file(ad, "play");
+            }
+            if (x == 5)
+            {
+                select_file("find");
+            }
+            if (x == 6)
+            {
+                cin >> ad;
+                // read_file(ad);
+            }
+            if (x == 7)
+            {
+                cin >> ad;
+                // read_file(ad);
+            }
+            if (x == 8)
+            {
             }
             if (x == 9)
             {
@@ -1143,3 +1190,308 @@ int main()
 
     return 0;
 }
+
+void find(int **table, int l, int x, int y, int xx, int yy, int i, int **path, int sum)
+{
+    // int sum = table[0][0];
+    // cout << "fjkd";
+    int h;
+    // cin>>l;
+
+    if (yy + 1 < y && !is_on_the_path(path, xx, yy + 1, l) && table[xx][yy + 1] != 0)
+    {
+                cout<<"RIGTH";
+        path[i][0] = xx;
+        path[i][1] = yy;
+        yy = yy + 1;
+
+        sum += table[xx][yy];
+        i++;
+        map_output(x, y, table, xx, yy, path, l);
+        cin >> h;
+        find(table, l, x, y, xx, yy, i, path, sum);
+    }
+    if ((is_on_the_path(path, xx + 1, yy, l) || xx + 1 >= x || table[xx + 1][yy] == 0) && (is_on_the_path(path, xx - 1, yy, l) || xx - 1 < 0 || table[xx - 1][yy] == 0) && (is_on_the_path(path, xx, yy + 1, l) || yy + 1 >= y || table[xx][yy + 1] == 0) && (is_on_the_path(path, xx, yy - 1, l) || yy - 1 < 0 || table[xx][yy - 1] == 0))
+    {
+        return;
+    }
+    if (xx - 1 >= 0 && !is_on_the_path(path, xx - 1, yy, l) && table[xx - 1][yy] != 0)
+    {
+                cout<<"UP";
+        path[i][0] = xx;
+        path[i][1] = yy;
+        xx = xx - 1;
+        sum += table[xx][yy];
+        i++;
+        map_output(x, y, table, xx, yy, path, l);
+        cin >> h;
+        find(table, l, x, y, xx, yy, i, path, sum);
+    }
+    if ((xx + 1) < x && !is_on_the_path(path, xx + 1, yy, l) && table[xx + 1][yy] != 0)
+    {
+        cout<<"DOWN";
+        path[i][0] = xx;
+        path[i][1] = yy;
+        xx = xx + 1;
+        sum += table[xx][yy];
+        i++;
+        map_output(x, y, table, xx, yy, path, l);
+        cin >> h;
+        find(table, l, x, y, xx, yy, i, path, sum);
+    }
+    if (yy - 1 >= 0 && !is_on_the_path(path, xx, yy - 1, l) && table[xx][yy - 1] != 0)
+    {
+                cout<<"LEFT";
+        path[i][0] = xx;
+        path[i][1] = yy;
+        yy = yy - 1;
+
+        sum += table[xx][yy];
+        i++;
+        map_output(x, y, table, xx, yy, path, l);
+        cin >> h;
+        find(table, l, x, y, xx, yy, i, path, sum);
+    }
+
+    if ((xx == x - 1 && yy == y - 1) || (i == l))
+    {
+
+        cout << sum;
+        cin >> h;
+        if (sum / 2 == table[x - 1][y - 1] && i == l && (xx == x - 1 && yy == y - 1))
+        {
+            cout << "moooooooz";
+            cin >> l;
+        }
+        else
+        {
+
+            return;
+        }
+    }
+}
+
+// int rast(char ar[5][5],int x,int y,int counter,int arc[25],int qqq,int gabl);
+// int left(char ar[5][5],int x,int y,int counter,int arc[25],int qqq,int gabl);
+// int up(char ar[5][5],int x,int y,int counter,int arc[25],int qqq,int gabl);
+// int down(char ar[5][5],int x,int y,int counter,int arc[25],int qqq,int gabl);
+// int ch(char ar[5][5],int x,int y,int counter,int arc[25],int qqq,int gabl);
+// int ch1(char ar[5][5],int x,int y,int counter,int arc[25],int qqq,int gabl);
+// int chnn(char ar[5][5],int x,int y,int counter,int arc[25],int qqq,int gabl);
+
+// using namespace std;
+// int main() {
+// 	int i=0,j=0,n,m;
+// 	char bo[5][5];
+// 	while(i!=5){
+// 		while(j!=5){
+// 			cin>>bo[i][j];
+// 			j++;
+// 		}
+// 		j=0;
+// 		i++;
+// 	}
+// 	i=0;
+// 	int arc[25];
+// 	ch(bo,0,0,0,arc,0,0);
+// 	cout<<"Lost!";
+// 	return 0;
+// }
+// int rast(char ar[5][5],int x,int y,int counter,int arc[25],int qqq,int gabl){
+// 		y=y+1;
+// 		counter++;
+// 		arc[qqq]=10*x+y;
+// 		qqq++;
+// 		if(ar[x][y]=='E'){
+// 			cout<<counter;
+// 			exit(0);
+// 		}
+// 		return ch (ar,x,y,counter,arc,qqq,1);
+// 	}
+
+// int left(char ar[5][5],int x,int y,int counter,int arc[25],int qqq,int gabl){
+// 		y=y-1;
+// 		counter++;
+// 		arc[qqq]=10*x+y;
+// 		qqq++;
+// 		if(ar[x][y]=='E'){
+// 			cout<<counter;
+// 			exit(0);
+// 		}
+// 		return ch (ar,x,y,counter,arc,qqq,2);
+// }
+// int up(char ar[5][5],int x,int y,int counter,int arc[25],int qqq,int gabl){
+// 		x=x-1;
+// 		counter++;
+// 		arc[qqq]=10*x+y;
+// 		qqq++;
+// 		if(ar[x][y]=='E'){
+// 			cout<<counter;
+// 			exit(0);
+// 		}
+// 		return ch (ar,x,y,counter,arc,qqq,3);
+// }
+// int down(char ar[5][5],int x,int y,int counter,int arc[25],int qqq,int gabl){
+// 		x=x+1;
+// 		counter++;
+// 		arc[qqq]=10*x+y;
+// 		qqq++;
+// 		if(ar[x][y]=='E'){
+// 			cout<<counter;
+// 			exit(0);
+// 		}
+// 		return ch (ar,x,y,counter,arc,qqq,4);
+// }
+// int chnn(char ar[5][5],int x,int y,int counter,int arc[25],int qqq,int gabl){
+// 	int k=0;
+// 	if((ar[x][y-1]=='.')||(ar[x][y-1]=='E')){
+// 		if((y-1>=0)&&(gabl!=1)){
+// 			k++;
+// 		}
+// 	}
+// 	if((ar[x-1][y]=='.')||(ar[x-1][y]=='E')){
+// 		if((x-1>=0)&&(gabl!=4)){
+// 			k++;
+// 	}
+// 	}
+// 		if((ar[x][y+1]=='.')||(ar[x][y+1]=='E')){
+// 	if((y+1<=4)&&(gabl!=2)){
+// k++;
+// 	}
+// 	}
+// 	if((ar[x+1][y]=='.')||(ar[x+1][y]=='E')){
+// 		if((x+1<=4)&&(gabl!=3)){
+// 			k++;
+// 	}
+// 	}
+// return k;
+// }
+// int ch(char ar[5][5],int x,int y,int counter,int arc[25],int qqq,int gabl){
+
+// 	int i=0,s=10*x+y,r=1,t=0;
+// 	int xx,yy;
+// 	int k=chnn(ar,x,y, counter,arc,qqq,gabl);
+// 	if (k>1){
+
+// 		ch1(ar,x,y, counter,arc,qqq,gabl);
+// 	}
+// 	while(i<qqq-1){
+// 		if(arc[i]==s){
+// 			return 0;
+// 		}
+// 		i++;
+// 	}
+// 	if((ar[x][y-1]=='.')||(ar[x][y-1]=='E')){
+// 		if((y-1>=0)&&(gabl!=1)&&(t!=k)){
+// 			r=-1;
+// 			t++;
+// 		return left(ar,x,y, counter,arc,qqq,gabl);
+// 		}
+// 	}
+// 	if((ar[x-1][y]=='.')||(ar[x-1][y]=='E')){
+// 		if((x-1>=0)&&(gabl!=4)&&(t!=k)){
+// 			t++;
+// 	r=-8;
+// 		return up(ar,x,y, counter,arc,qqq,gabl);
+// 	}
+// 	}
+// 		if((ar[x][y+1]=='.')||(ar[x][y+1]=='E')){
+// 	if((y+1<=4)&&(gabl!=2)&&(t!=k)){
+// 		r=-8;
+// 		t++;
+// 		return rast(ar,x,y, counter,arc,qqq,gabl);
+// 	}
+// 	}
+// 	if((ar[x+1][y]=='.')||(ar[x+1][y]=='E')){
+// 		if((x+1<=4)&&(gabl!=3)&&(t!=k)){
+// 			t++;
+// 			r=-7;
+// 		return down(ar,x,y, counter,arc,qqq,gabl);
+// 	}
+// 	}
+// if(r==1){
+// 	if(gabl==1){
+// 		ch(ar,x,y-1, counter,arc,qqq,gabl);
+
+// 	}
+// 	if(gabl==2){
+// 		ch(ar,x,y+1, counter,arc,qqq,gabl);
+
+// 	}
+// 	if(gabl==3){
+// 		ch(ar,x+1,y, counter,arc,qqq,gabl);
+
+// 	}
+// 	if(gabl==4){
+// 		ch(ar,x-1,y, counter,arc,qqq,gabl);
+
+// 	}
+// 	return 0;
+// }
+// return ch(ar,x,y, counter,arc,qqq,gabl);
+// }
+// int ch1(char ar[5][5],int x,int y,int counter,int arc[25],int qqq,int gabl){
+
+// 	int i=0,s=10*x+y,r=1,t=0;
+// 	int xx,yy;
+// 	while(i<qqq-1){
+// 		if(arc[i]==s){
+// 			return 0;
+// 		}
+// 		i++;
+// 	}
+
+// 	if((ar[x+1][y]=='.')||(ar[x+1][y]=='E')){
+// 		if((x+1<=4)&&(gabl!=3)){
+// 			t++;
+// 			r=-7;
+// 		return down(ar,x,y, counter,arc,qqq,gabl);
+// 	}
+// 	}
+
+// 	if((ar[x][y+1]=='.')||(ar[x][y+1]=='E')){
+// 	if((y+1<=4)&&(gabl!=2)){
+// 		r=-8;
+// 		t++;
+// 		return rast(ar,x,y, counter,arc,qqq,gabl);
+// 	}
+// 	}
+// 	if((ar[x-1][y]=='.')||(ar[x-1][y]=='E')){
+// 		if((x-1>=0)&&(gabl!=4)){
+// 			t++;
+// 	r=-8;
+// 		return up(ar,x,y, counter,arc,qqq,gabl);
+// 	}
+// 	}
+// 	if((ar[x][y-1]=='.')||(ar[x][y-1]=='E')){
+// 		if((y-1>=0)&&(gabl!=1)){
+// 			r=-1;
+// 			t++;
+// 		return left(ar,x,y, counter,arc,qqq,gabl);
+// 		}
+// 	}
+// if(r==1){
+// 	if(gabl==1){
+// 		ch(ar,x,y-1, counter,arc,qqq,gabl);
+
+// 	}
+// 	if(gabl==2){
+// 		ch(ar,x,y+1, counter,arc,qqq,gabl);
+
+// 	}
+// 	if(gabl==3){
+// 		ch(ar,x+1,y, counter,arc,qqq,gabl);
+
+// 	}
+// 	if(gabl==4){
+// 		ch(ar,x-1,y, counter,arc,qqq,gabl);
+
+// 	}
+// 	//cout<<"Lost.";
+// 	//exit(0);
+// 	return 0;
+// }
+// //cout<<"finish"<<x<<"  " <<y<<" "<<s<<" "<<qqq<<"mozzzz";
+// return ch(ar,x,y, counter,arc,qqq,gabl);
+
+// }
