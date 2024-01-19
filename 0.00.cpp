@@ -10,6 +10,7 @@
 #include <filesystem>
 #include <string>
 #include <sys/stat.h>
+#include <conio.h>
 using namespace std;
 namespace fs = filesystem;
 
@@ -204,6 +205,8 @@ bool make_path(int **path, int xx, int yy, int l, int x, int y, int **table, int
 bool is_on_the_path(int **path, int xx, int yy, int l);
 void output_list(int i);
 bool gandz(int **path, int xx, int yy, int l, int x, int y, int uc, int rc, int dc, int lc);
+bool find(int **table, int l, int x, int y, int xx, int yy, int i, int **path, int sum, bool end);
+string find_path();
 bool gand(int **path, int xx, int yy, int l, int x, int y)
 {
     if ((is_on_the_path(path, xx + 1, yy, l) || xx + 1 >= x) && (is_on_the_path(path, xx - 1, yy, l) || xx - 1 < 0) && (is_on_the_path(path, xx, yy + 1, l) || yy + 1 >= y) && (is_on_the_path(path, xx, yy - 1, l) || yy - 1 < 0))
@@ -216,7 +219,6 @@ bool gand(int **path, int xx, int yy, int l, int x, int y)
 // for getch
 
 #ifdef __MINGW32__
-#include <conio.h>
 const int UP_KEY = 72;
 const int DOWN_KEY = 80;
 const int ENTER_KEY = 13;
@@ -261,6 +263,23 @@ void clean()
 }
 //...
 // output map
+
+string find_path()
+{
+    char tmp[256];
+    getcwd(tmp, 256);
+    string s = tmp, q;
+
+    for (int i = 0; i < s.size(); i++)
+    {
+        if (s[i] == (char)92)
+        {
+            q += s[i];
+        }
+        q += s[i];
+    }
+    return q;
+}
 void map_output(int x, int y, int **table, int xx, int yy, int **path, int l)
 {
     int max_l = to_string(table[0][0]).size();
@@ -327,8 +346,9 @@ void map_output(int x, int y, int **table, int xx, int yy, int **path, int l)
                     {
                         print(out, color_pink, color_black);
                     }
-                    else if (table[(i - 1) / 2][(j - 1) / 2] == 0)
+                    else if (table[(i - 1) / 2][(j - 1) / 2] == 0 && ((i - 1) / 2 != x - 1 || (j - 1) / 2 != y - 1))
                     {
+                        // cout<<x<<y;
                         print(out, color_red, color_black);
                     }
                     else if (flag == 1)
@@ -340,7 +360,7 @@ void map_output(int x, int y, int **table, int xx, int yy, int **path, int l)
         }
         else
         {
-            for (int j = 0; j < y * (5+max_l) + 1; j++)
+            for (int j = 0; j < y * (5 + max_l) + 1; j++)
             {
                 cout << "-";
             }
@@ -351,6 +371,19 @@ void map_output(int x, int y, int **table, int xx, int yy, int **path, int l)
 string map_save(int x, int y, int **table, int xx, int yy, int **path, int l)
 {
     string s;
+
+    int max_l = to_string(table[0][0]).size();
+    for (int i = 0; i < x; i++)
+    {
+        for (int j = 0; j < y; j++)
+        {
+            if (to_string(table[i][j]).size() > max_l)
+            {
+                max_l = to_string(table[i][j]).size();
+            }
+        }
+    }
+
     for (int i = 0; i < x * 2 + 1; i++)
     {
         s += "\n";
@@ -373,6 +406,21 @@ string map_save(int x, int y, int **table, int xx, int yy, int **path, int l)
                 }
                 else
                 {
+                    bool flag2 = 1;
+                    string out = to_string(table[(i - 1) / 2][(j - 1) / 2]);
+                    while (out.size() < max_l)
+                    {
+                        if (flag2)
+                        {
+                            out = out + ' ';
+                            flag2 = 0;
+                        }
+                        else
+                        {
+                            out = ' ' + out;
+                            flag2 = 1;
+                        }
+                    }
 
                     bool flag = 1;
                     for (size_t h = 0; h < l; h++)
@@ -380,28 +428,29 @@ string map_save(int x, int y, int **table, int xx, int yy, int **path, int l)
                         if (path[h][0] == (i - 1) / 2 && path[h][1] == (j - 1) / 2)
                         {
                             flag = 0;
-                            s += to_string(table[(i - 1) / 2][(j - 1) / 2]);
+                            s += out;
                         }
                     }
 
                     if ((i - 1) / 2 == xx && (j - 1) / 2 == yy)
                     {
-                        s += to_string(table[(i - 1) / 2][(j - 1) / 2]);
+                        s += out;
                     }
-                    else if (table[(i - 1) / 2][(j - 1) / 2] == 0)
+                    else if (table[(i - 1) / 2][(j - 1) / 2] == 0 && ((i - 1) / 2 != x - 1 || (j - 1) / 2 != y - 1))
                     {
-                        s += to_string(table[(i - 1) / 2][(j - 1) / 2]);
+                        // cout<<x<<y;
+                        s += out;
                     }
                     else if (flag == 1)
                     {
-                        s += to_string(table[(i - 1) / 2][(j - 1) / 2]);
+                        s += out;
                     }
                 }
             }
         }
         else
         {
-            for (int j = 0; j < y * 6 + 1; j++)
+            for (int j = 0; j < y * (5 + max_l) + 1; j++)
             {
                 s += "-";
             }
@@ -418,22 +467,37 @@ void create_map(string s)
     int max_value, min_value, max_block, min_block;
     string map;
 
-    cout << "Enter number of lines : ";
+    cout << "\nPress (Enter) to return to menu";
+    if (s == "Easy")
+    {
+        cout << "\nPress any key to create an " << s << " map";
+    }
+    if (s == "Hard")
+    {
+        cout << "\nPress any key to create a " << s << " map";
+    }
+    q = getch();
+    if (q == 13)
+    {
+        return;
+    }
+
+    cout << "\nEnter number of lines : ";
     cin >> x;
     // cin>>x;
-    cout << "Enter number of columns : ";
+    cout << "\nEnter number of columns : ";
     cin >> y;
     if (s != "Easy")
     {
-        cout << "Enter lengtsh of the path : ";
+        cout << "\nEnter lengtsh of the path : ";
         cin >> l;
-        cout << "Enter minimum value of table : ";
+        cout << "\nEnter minimum value of table : ";
         cin >> min_value;
-        cout << "Enter maximum value of table : ";
+        cout << "\nEnter maximum value of table : ";
         cin >> max_value;
-        cout << "Enter minimum number of blocks : ";
+        cout << "\nEnter minimum number of blocks : ";
         cin >> min_block;
-        cout << "Enter maximum number of blocks : ";
+        cout << "\nEnter maximum number of blocks : ";
         cin >> max_block;
     }
     else
@@ -446,49 +510,49 @@ void create_map(string s)
     }
     if ((x + y) % 2 != l % 2)
     {
-        cerr << "invalid path length";
+        cerr << "\ninvalid path length";
         cout << "\npress any key to continue";
         q = getch();
         return;
     }
     if (l > x * y - 1)
     {
-        cerr << "invalid path length";
+        cerr << "\ninvalid path length";
         cout << "\npress any key to continue";
         q = getch();
         return;
     }
     if (l < x + y - 2)
     {
-        cerr << "invalid path length";
+        cerr << "\ninvalid path length";
         cout << "\npress any key to continue";
         q = getch();
         return;
     }
     if (l + min_block + 1 > x * y)
     {
-        cerr << "invalid path length";
+        cerr << "\ninvalid path length";
         cout << "\npress any key to continue";
         q = getch();
         return;
     }
     if (min_block > max_block)
     {
-        cerr << "invalid minimum and maximum blocks!!";
+        cerr << "\ninvalid minimum and maximum blocks!!";
         cout << "\npress any key to continue";
         q = getch();
         return;
     }
     if (min_block < 0)
     {
-        cerr << "invalid minimum block!!";
+        cerr << "\ninvalid minimum block!!";
         cout << "\npress any key to continue";
         q = getch();
         return;
     }
     if (min_value > max_value)
     {
-        cerr << "invalid minimum and maximum values!!";
+        cerr << "\ninvalid minimum and maximum values!!";
         cout << "\npress any key to continue";
         q = getch();
         return;
@@ -518,10 +582,10 @@ void create_map(string s)
     map = map_save(x, y, table, xx, yy, path, l);
     string name, addres;
 
-    cout << "Map creation was successful\nPlease enter a name for your map : ";
+    cout << "\nMap creation was successful\nPlease enter a name for your map : ";
     cin >> name;
 
-    cout << "Your map has been saved as " << s << '_' << name;
+    cout << "\nYour map has been saved as " << s << '_' << name;
     addres = (char)92 + s + '_' + name + '.' + "txt";
     addres = "Maps" + addres;
     // cout << name;
@@ -536,7 +600,7 @@ void create_map(string s)
     q = getch();
 }
 
-void read_file(string s)
+void read_file(string s, string ss)
 {
 
     bool flag = 1;
@@ -546,7 +610,7 @@ void read_file(string s)
     ifstream A(s);
     if (A.fail() == 1)
     {
-        cerr << "Invalid address";
+        cerr << "\nInvalid address";
         cout << "\npress any key to continue";
         q = getch();
         return;
@@ -629,8 +693,25 @@ void read_file(string s)
     }
 
     B.close();
-
-    playground(table, l, x, y);
+    if (ss == "find")
+    {
+        int **path = new int *[l];
+        for (int i = 0; i < l; i++)
+        {
+            *(path + i) = new int[2];
+            for (int j = 0; j < 2; j++)
+            {
+                path[i][j] = x;
+            }
+        }
+        find(table, l, x, y, 0, 0, 0, path, table[0][0], 0);
+        // cout << "\npress any key to continue";
+        // q = getch();
+    }
+    if (ss == "play")
+    {
+        playground(table, l, x, y);
+    }
 }
 void playground(int **table, int l, int x, int y)
 {
@@ -655,12 +736,15 @@ void playground(int **table, int l, int x, int y)
             path[i][j] = x;
         }
     }
-
     map_output(x, y, table, xx, yy, path, l);
+
     int sum = table[0][0];
     for (size_t i = 0; i < l;)
     {
-        if ((is_on_the_path(path, xx + 1, yy, l) || xx + 1 >= x || table[xx + 1][yy] == 0) && (is_on_the_path(path, xx - 1, yy, l) || xx - 1 < 0 || table[xx - 1][yy] == 0) && (is_on_the_path(path, xx, yy + 1, l) || yy + 1 >= y || table[xx][yy + 1] == 0) && (is_on_the_path(path, xx, yy - 1, l) || yy - 1 < 0 || table[xx][yy - 1] == 0))
+        cout << "\nyour path sum : " << sum;
+        cout << "\nYour Path length : " << i;
+        cout << "\nTarget Path length : " << l;
+        if ((is_on_the_path(path, xx + 1, yy, l) || xx + 1 >= x || (table[xx + 1][yy] == 0 && xx != x - 1 && yy != y - 1)) && (is_on_the_path(path, xx - 1, yy, l) || xx - 1 < 0 || (table[xx - 1][yy] == 0 && xx != x - 1 && yy != y - 1)) && (is_on_the_path(path, xx, yy + 1, l) || yy + 1 >= y || (table[xx][yy + 1] == 0 && xx != x - 1 && yy != y - 1)) && (is_on_the_path(path, xx, yy - 1, l) || yy - 1 < 0 || (table[xx][yy - 1] == 0 && xx != x - 1 && yy != y - 1)))
         {
             print("\nyou lost!!\n", color_red, color_black);
             break;
@@ -668,7 +752,7 @@ void playground(int **table, int l, int x, int y)
         q = getch();
         clean();
         // cout<<int(q);
-        if ((int)q == 72 && xx - 1 >= 0 && !is_on_the_path(path, xx - 1, yy, l) && table[xx - 1][yy] != 0)
+        if ((int)q == 72 && xx - 1 >= 0 && !is_on_the_path(path, xx - 1, yy, l) && (table[xx - 1][yy] != 0 || (xx - 1 == x - 1 && yy == y - 1)))
         {
             path[i][0] = xx;
             path[i][1] = yy;
@@ -677,7 +761,7 @@ void playground(int **table, int l, int x, int y)
             sum += table[xx][yy];
             i++;
         }
-        else if ((int)q == 80 && (xx + 1) < x && !is_on_the_path(path, xx + 1, yy, l) && table[xx + 1][yy] != 0)
+        else if ((int)q == 80 && (xx + 1) < x && !is_on_the_path(path, xx + 1, yy, l) && (table[xx + 1][yy] != 0 || (xx + 1 == x - 1 && yy == y - 1)))
         {
             path[i][0] = xx;
             path[i][1] = yy;
@@ -686,7 +770,7 @@ void playground(int **table, int l, int x, int y)
             sum += table[xx][yy];
             i++;
         }
-        else if ((int)q == 77 && yy + 1 < y && !is_on_the_path(path, xx, yy + 1, l) && table[xx][yy + 1] != 0)
+        else if ((int)q == 77 && yy + 1 < y && !is_on_the_path(path, xx, yy + 1, l) && (table[xx][yy + 1] != 0 || (xx == x - 1 && yy + 1 == y - 1)))
         {
             path[i][0] = xx;
             path[i][1] = yy;
@@ -695,7 +779,7 @@ void playground(int **table, int l, int x, int y)
             sum += table[xx][yy];
             i++;
         }
-        else if ((int)q == 75 && yy - 1 >= 0 && !is_on_the_path(path, xx, yy - 1, l) && table[xx][yy - 1] != 0)
+        else if ((int)q == 75 && yy - 1 >= 0 && !is_on_the_path(path, xx, yy - 1, l) && (table[xx][yy - 1] != 0 || (xx == x - 1 && yy - 1 == y - 1)))
         {
             path[i][0] = xx;
             path[i][1] = yy;
@@ -706,6 +790,7 @@ void playground(int **table, int l, int x, int y)
         }
         else
         {
+
             map_output(x, y, table, xx, yy, path, l);
             print("\nInvalid move!!\nPlease try again", color_red, color_black);
         }
@@ -716,20 +801,25 @@ void playground(int **table, int l, int x, int y)
             if (i == l && sum / 2 == table[x - 1][y - 1])
             {
                 cout << "\n";
-                print("you won!!", color_green, color_black);
+                print("YOU WON!!", color_green, color_black);
+                cout << "\nYour sum : " << sum - table[x - 1][y - 1];
+                cout << "\nYour path length : " << i;
+                cout << "\nTarget Path length : " << l;
             }
             else
             {
-                print("\nyou lost!!", color_red, color_black);
+                print("\nYOU LOST!!", color_red, color_black);
                 cout << "\nYour sum : " << sum - table[x - 1][y - 1];
+
+                cout << "\nYour path length : " << i;
+                cout << "\nTarget Path length : " << l;
             }
-            cout << "\ntime spending: " << fixed << setprecision(2) << chrono::duration<double>(diff).count() << " s" << endl;
+            cout << "\nTime spending: " << fixed << setprecision(2) << chrono::duration<double>(diff).count() << " s";
 
             break;
         }
-        cout << "\nyour path sum : " << sum;
     }
-    cout << "press any key to continue";
+    cout << "\npress any key to continue";
     q = getch();
 }
 
@@ -1017,11 +1107,11 @@ void menu(int n)
     }
 }
 vector<pair<int, string>> ps;
-void select_file()
+void select_file(string ss)
 {
     int index;
     string s;
-    std::string path = "C:\\Users\\asus\\Desktop\\project\\Maze_Maverick\\Maps";
+    string path = find_path() + (char)92 + (char)92 + "Maps";
     int i = 0;
     while (i != ps.size())
     {
@@ -1029,7 +1119,8 @@ void select_file()
     }
 
     struct stat sb;
-    int iii = 0;
+    ps.push_back(make_pair(0, "Back to menu"));
+    int iii = 1;
     for (const auto &entry : fs::directory_iterator(path))
     {
         iii++;
@@ -1063,13 +1154,24 @@ void select_file()
 
         output_list(i);
     }
+    if (ps[i].second == "Back to menu")
+    {
+        return;
+    }
 
     string f = "";
     f = "Maps";
     f = f + (char)92;
     f = f + ps[i].second;
     clean();
-    read_file(f);
+    if (ss == "find")
+    {
+        read_file(f, "find");
+    }
+    if (ss == "play")
+    {
+        read_file(f, "play");
+    }
 }
 
 void output_list(int i)
@@ -1121,12 +1223,30 @@ int main()
             }
             if (x == 3)
             {
-                select_file();
+                select_file("play");
             }
             if (x == 4)
             {
                 cin >> ad;
-                read_file(ad);
+                read_file(ad, "play");
+            }
+            if (x == 5)
+            {
+                select_file("find");
+                // cin>>x;
+            }
+            if (x == 6)
+            {
+                cin >> ad;
+                read_file(ad, "find");
+            }
+            if (x == 7)
+            {
+                cin >> ad;
+                // read_file(ad);
+            }
+            if (x == 8)
+            {
             }
             if (x == 9)
             {
@@ -1141,5 +1261,108 @@ int main()
         menu(x);
     }
 
+    return 0;
+}
+
+bool find(int **table, int l, int x, int y, int xx, int yy, int i, int **path, int sum, bool end)
+{
+    char q;
+    if ((xx == x - 1 && yy == y - 1) || (i == l))
+    {
+        if ((float)sum / 2 == table[x - 1][y - 1] && i == l && (xx == x - 1 && yy == y - 1))
+        {
+            clean();
+            map_output(x, y, table, xx, yy, path, l);
+            cout << "\nPress (Enter) to return";
+            cout << "\nPress any key to show other results if exist";
+            q = getch();
+            if (q == 13)
+            {
+                return 1;
+            }
+            return 0;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    if ((is_on_the_path(path, xx + 1, yy, l) || xx + 1 >= x || table[xx + 1][yy] == 0) && (is_on_the_path(path, xx - 1, yy, l) || xx - 1 < 0 || table[xx - 1][yy] == 0) && (is_on_the_path(path, xx, yy + 1, l) || yy + 1 >= y || table[xx][yy + 1] == 0) && (is_on_the_path(path, xx, yy - 1, l) || yy - 1 < 0 || table[xx][yy - 1] == 0))
+    {
+        return 0;
+    }
+
+    if (yy + 1 < y && !is_on_the_path(path, xx, yy + 1, l) && table[xx][yy + 1] != 0)
+    {
+        path[i][0] = xx;
+        path[i][1] = yy;
+        yy = yy + 1;
+
+        sum += table[xx][yy];
+        i++;
+        if (find(table, l, x, y, xx, yy, i, path, sum, 0))
+        {
+            return 1;
+        }
+
+        i--;
+        path[i][0] = x;
+        path[i][1] = y;
+        sum = sum - table[xx][yy];
+        yy = yy - 1;
+    }
+    if (xx - 1 >= 0 && !is_on_the_path(path, xx - 1, yy, l) && table[xx - 1][yy] != 0)
+    {
+        path[i][0] = xx;
+        path[i][1] = yy;
+        xx = xx - 1;
+        sum += table[xx][yy];
+        i++;
+        if (find(table, l, x, y, xx, yy, i, path, sum, 0))
+        {
+            return 1;
+        }
+        i--;
+        path[i][0] = x;
+        path[i][1] = y;
+        sum = sum - table[xx][yy];
+        xx = xx + 1;
+    }
+    if ((xx + 1) < x && !is_on_the_path(path, xx + 1, yy, l) && table[xx + 1][yy] != 0)
+    {
+        path[i][0] = xx;
+        path[i][1] = yy;
+        xx = xx + 1;
+        sum += table[xx][yy];
+        i++;
+        if (find(table, l, x, y, xx, yy, i, path, sum, 0))
+        {
+            return 1;
+        }
+        i--;
+        path[i][0] = x;
+        path[i][1] = y;
+        sum = sum - table[xx][yy];
+        xx = xx - 1;
+    }
+    if (yy - 1 >= 0 && !is_on_the_path(path, xx, yy - 1, l) && table[xx][yy - 1] != 0)
+    {
+
+        path[i][0] = xx;
+        path[i][1] = yy;
+        yy = yy - 1;
+
+        sum += table[xx][yy];
+        i++;
+        if (find(table, l, x, y, xx, yy, i, path, sum, 0))
+        {
+            return 1;
+        }
+        i--;
+        path[i][0] = x;
+        path[i][1] = y;
+        sum = sum - table[xx][yy];
+        yy = yy + 1;
+    }
     return 0;
 }
