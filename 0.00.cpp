@@ -643,6 +643,9 @@ void read_file(string s, string ss)
             }
         }
         find(table, l, x, y, 0, 0, 0, path, table[0][0]);
+        cout<<"press any key to continue";
+        q=getch();
+
     }
     if (ss == "play")
     {
@@ -1161,19 +1164,22 @@ int main()
             if (x == 5)
             {
                 select_file("find");
+                // cin>>x;
             }
             if (x == 6)
             {
                 cin >> ad;
-                // read_file(ad);
+                read_file(ad,"find");
             }
             if (x == 7)
             {
-                cin >> ad;
+                cin >> ad; 
                 // read_file(ad);
             }
             if (x == 8)
             {
+
+
             }
             if (x == 9)
             {
@@ -1193,305 +1199,83 @@ int main()
 
 void find(int **table, int l, int x, int y, int xx, int yy, int i, int **path, int sum)
 {
-    // int sum = table[0][0];
-    // cout << "fjkd";
-    int h;
-    // cin>>l;
+        if ((xx == x - 1 && yy == y - 1) || (i == l))
+    {
+        if (sum / 2 == table[x - 1][y - 1] && i == l && (xx == x - 1 && yy == y - 1))
+        {
+            map_output(x, y, table, xx, yy, path, l);
+            
+        }
+        else
+        {
+            return;
+        }
+    }
+    if ((is_on_the_path(path, xx + 1, yy, l) || xx + 1 >= x || table[xx + 1][yy] == 0) && (is_on_the_path(path, xx - 1, yy, l) || xx - 1 < 0 || table[xx - 1][yy] == 0) && (is_on_the_path(path, xx, yy + 1, l) || yy + 1 >= y || table[xx][yy + 1] == 0) && (is_on_the_path(path, xx, yy - 1, l) || yy - 1 < 0 || table[xx][yy - 1] == 0))
+    {
+        return;
+    }
 
     if (yy + 1 < y && !is_on_the_path(path, xx, yy + 1, l) && table[xx][yy + 1] != 0)
     {
-                cout<<"RIGTH";
         path[i][0] = xx;
         path[i][1] = yy;
         yy = yy + 1;
 
         sum += table[xx][yy];
         i++;
-        map_output(x, y, table, xx, yy, path, l);
-        cin >> h;
         find(table, l, x, y, xx, yy, i, path, sum);
-    }
-    if ((is_on_the_path(path, xx + 1, yy, l) || xx + 1 >= x || table[xx + 1][yy] == 0) && (is_on_the_path(path, xx - 1, yy, l) || xx - 1 < 0 || table[xx - 1][yy] == 0) && (is_on_the_path(path, xx, yy + 1, l) || yy + 1 >= y || table[xx][yy + 1] == 0) && (is_on_the_path(path, xx, yy - 1, l) || yy - 1 < 0 || table[xx][yy - 1] == 0))
-    {
-        return;
+        i--;
+        path[i][0] = x;
+        path[i][1] = y;
+        sum =sum- table[xx][yy];
+        yy=yy-1;
     }
     if (xx - 1 >= 0 && !is_on_the_path(path, xx - 1, yy, l) && table[xx - 1][yy] != 0)
     {
-                cout<<"UP";
         path[i][0] = xx;
         path[i][1] = yy;
         xx = xx - 1;
         sum += table[xx][yy];
         i++;
-        map_output(x, y, table, xx, yy, path, l);
-        cin >> h;
         find(table, l, x, y, xx, yy, i, path, sum);
+        i--;
+        path[i][0] = x;
+        path[i][1] = y;
+        sum =sum- table[xx][yy];
+                xx=xx+1;
     }
     if ((xx + 1) < x && !is_on_the_path(path, xx + 1, yy, l) && table[xx + 1][yy] != 0)
     {
-        cout<<"DOWN";
         path[i][0] = xx;
         path[i][1] = yy;
         xx = xx + 1;
         sum += table[xx][yy];
         i++;
-        map_output(x, y, table, xx, yy, path, l);
-        cin >> h;
         find(table, l, x, y, xx, yy, i, path, sum);
+        i--;
+        path[i][0] = x;
+        path[i][1] = y;
+        sum =sum- table[xx][yy];
+        xx=xx-1;
     }
     if (yy - 1 >= 0 && !is_on_the_path(path, xx, yy - 1, l) && table[xx][yy - 1] != 0)
     {
-                cout<<"LEFT";
+
         path[i][0] = xx;
         path[i][1] = yy;
         yy = yy - 1;
 
         sum += table[xx][yy];
         i++;
-        map_output(x, y, table, xx, yy, path, l);
-        cin >> h;
+
         find(table, l, x, y, xx, yy, i, path, sum);
+        i--;
+        path[i][0] = x;
+        path[i][1] = y;
+        sum =sum- table[xx][yy];
+                yy=yy+1;
     }
 
-    if ((xx == x - 1 && yy == y - 1) || (i == l))
-    {
-
-        cout << sum;
-        cin >> h;
-        if (sum / 2 == table[x - 1][y - 1] && i == l && (xx == x - 1 && yy == y - 1))
-        {
-            cout << "moooooooz";
-            cin >> l;
-        }
-        else
-        {
-
-            return;
-        }
-    }
+    return;
 }
-
-// int rast(char ar[5][5],int x,int y,int counter,int arc[25],int qqq,int gabl);
-// int left(char ar[5][5],int x,int y,int counter,int arc[25],int qqq,int gabl);
-// int up(char ar[5][5],int x,int y,int counter,int arc[25],int qqq,int gabl);
-// int down(char ar[5][5],int x,int y,int counter,int arc[25],int qqq,int gabl);
-// int ch(char ar[5][5],int x,int y,int counter,int arc[25],int qqq,int gabl);
-// int ch1(char ar[5][5],int x,int y,int counter,int arc[25],int qqq,int gabl);
-// int chnn(char ar[5][5],int x,int y,int counter,int arc[25],int qqq,int gabl);
-
-// using namespace std;
-// int main() {
-// 	int i=0,j=0,n,m;
-// 	char bo[5][5];
-// 	while(i!=5){
-// 		while(j!=5){
-// 			cin>>bo[i][j];
-// 			j++;
-// 		}
-// 		j=0;
-// 		i++;
-// 	}
-// 	i=0;
-// 	int arc[25];
-// 	ch(bo,0,0,0,arc,0,0);
-// 	cout<<"Lost!";
-// 	return 0;
-// }
-// int rast(char ar[5][5],int x,int y,int counter,int arc[25],int qqq,int gabl){
-// 		y=y+1;
-// 		counter++;
-// 		arc[qqq]=10*x+y;
-// 		qqq++;
-// 		if(ar[x][y]=='E'){
-// 			cout<<counter;
-// 			exit(0);
-// 		}
-// 		return ch (ar,x,y,counter,arc,qqq,1);
-// 	}
-
-// int left(char ar[5][5],int x,int y,int counter,int arc[25],int qqq,int gabl){
-// 		y=y-1;
-// 		counter++;
-// 		arc[qqq]=10*x+y;
-// 		qqq++;
-// 		if(ar[x][y]=='E'){
-// 			cout<<counter;
-// 			exit(0);
-// 		}
-// 		return ch (ar,x,y,counter,arc,qqq,2);
-// }
-// int up(char ar[5][5],int x,int y,int counter,int arc[25],int qqq,int gabl){
-// 		x=x-1;
-// 		counter++;
-// 		arc[qqq]=10*x+y;
-// 		qqq++;
-// 		if(ar[x][y]=='E'){
-// 			cout<<counter;
-// 			exit(0);
-// 		}
-// 		return ch (ar,x,y,counter,arc,qqq,3);
-// }
-// int down(char ar[5][5],int x,int y,int counter,int arc[25],int qqq,int gabl){
-// 		x=x+1;
-// 		counter++;
-// 		arc[qqq]=10*x+y;
-// 		qqq++;
-// 		if(ar[x][y]=='E'){
-// 			cout<<counter;
-// 			exit(0);
-// 		}
-// 		return ch (ar,x,y,counter,arc,qqq,4);
-// }
-// int chnn(char ar[5][5],int x,int y,int counter,int arc[25],int qqq,int gabl){
-// 	int k=0;
-// 	if((ar[x][y-1]=='.')||(ar[x][y-1]=='E')){
-// 		if((y-1>=0)&&(gabl!=1)){
-// 			k++;
-// 		}
-// 	}
-// 	if((ar[x-1][y]=='.')||(ar[x-1][y]=='E')){
-// 		if((x-1>=0)&&(gabl!=4)){
-// 			k++;
-// 	}
-// 	}
-// 		if((ar[x][y+1]=='.')||(ar[x][y+1]=='E')){
-// 	if((y+1<=4)&&(gabl!=2)){
-// k++;
-// 	}
-// 	}
-// 	if((ar[x+1][y]=='.')||(ar[x+1][y]=='E')){
-// 		if((x+1<=4)&&(gabl!=3)){
-// 			k++;
-// 	}
-// 	}
-// return k;
-// }
-// int ch(char ar[5][5],int x,int y,int counter,int arc[25],int qqq,int gabl){
-
-// 	int i=0,s=10*x+y,r=1,t=0;
-// 	int xx,yy;
-// 	int k=chnn(ar,x,y, counter,arc,qqq,gabl);
-// 	if (k>1){
-
-// 		ch1(ar,x,y, counter,arc,qqq,gabl);
-// 	}
-// 	while(i<qqq-1){
-// 		if(arc[i]==s){
-// 			return 0;
-// 		}
-// 		i++;
-// 	}
-// 	if((ar[x][y-1]=='.')||(ar[x][y-1]=='E')){
-// 		if((y-1>=0)&&(gabl!=1)&&(t!=k)){
-// 			r=-1;
-// 			t++;
-// 		return left(ar,x,y, counter,arc,qqq,gabl);
-// 		}
-// 	}
-// 	if((ar[x-1][y]=='.')||(ar[x-1][y]=='E')){
-// 		if((x-1>=0)&&(gabl!=4)&&(t!=k)){
-// 			t++;
-// 	r=-8;
-// 		return up(ar,x,y, counter,arc,qqq,gabl);
-// 	}
-// 	}
-// 		if((ar[x][y+1]=='.')||(ar[x][y+1]=='E')){
-// 	if((y+1<=4)&&(gabl!=2)&&(t!=k)){
-// 		r=-8;
-// 		t++;
-// 		return rast(ar,x,y, counter,arc,qqq,gabl);
-// 	}
-// 	}
-// 	if((ar[x+1][y]=='.')||(ar[x+1][y]=='E')){
-// 		if((x+1<=4)&&(gabl!=3)&&(t!=k)){
-// 			t++;
-// 			r=-7;
-// 		return down(ar,x,y, counter,arc,qqq,gabl);
-// 	}
-// 	}
-// if(r==1){
-// 	if(gabl==1){
-// 		ch(ar,x,y-1, counter,arc,qqq,gabl);
-
-// 	}
-// 	if(gabl==2){
-// 		ch(ar,x,y+1, counter,arc,qqq,gabl);
-
-// 	}
-// 	if(gabl==3){
-// 		ch(ar,x+1,y, counter,arc,qqq,gabl);
-
-// 	}
-// 	if(gabl==4){
-// 		ch(ar,x-1,y, counter,arc,qqq,gabl);
-
-// 	}
-// 	return 0;
-// }
-// return ch(ar,x,y, counter,arc,qqq,gabl);
-// }
-// int ch1(char ar[5][5],int x,int y,int counter,int arc[25],int qqq,int gabl){
-
-// 	int i=0,s=10*x+y,r=1,t=0;
-// 	int xx,yy;
-// 	while(i<qqq-1){
-// 		if(arc[i]==s){
-// 			return 0;
-// 		}
-// 		i++;
-// 	}
-
-// 	if((ar[x+1][y]=='.')||(ar[x+1][y]=='E')){
-// 		if((x+1<=4)&&(gabl!=3)){
-// 			t++;
-// 			r=-7;
-// 		return down(ar,x,y, counter,arc,qqq,gabl);
-// 	}
-// 	}
-
-// 	if((ar[x][y+1]=='.')||(ar[x][y+1]=='E')){
-// 	if((y+1<=4)&&(gabl!=2)){
-// 		r=-8;
-// 		t++;
-// 		return rast(ar,x,y, counter,arc,qqq,gabl);
-// 	}
-// 	}
-// 	if((ar[x-1][y]=='.')||(ar[x-1][y]=='E')){
-// 		if((x-1>=0)&&(gabl!=4)){
-// 			t++;
-// 	r=-8;
-// 		return up(ar,x,y, counter,arc,qqq,gabl);
-// 	}
-// 	}
-// 	if((ar[x][y-1]=='.')||(ar[x][y-1]=='E')){
-// 		if((y-1>=0)&&(gabl!=1)){
-// 			r=-1;
-// 			t++;
-// 		return left(ar,x,y, counter,arc,qqq,gabl);
-// 		}
-// 	}
-// if(r==1){
-// 	if(gabl==1){
-// 		ch(ar,x,y-1, counter,arc,qqq,gabl);
-
-// 	}
-// 	if(gabl==2){
-// 		ch(ar,x,y+1, counter,arc,qqq,gabl);
-
-// 	}
-// 	if(gabl==3){
-// 		ch(ar,x+1,y, counter,arc,qqq,gabl);
-
-// 	}
-// 	if(gabl==4){
-// 		ch(ar,x-1,y, counter,arc,qqq,gabl);
-
-// 	}
-// 	//cout<<"Lost.";
-// 	//exit(0);
-// 	return 0;
-// }
-// //cout<<"finish"<<x<<"  " <<y<<" "<<s<<" "<<qqq<<"mozzzz";
-// return ch(ar,x,y, counter,arc,qqq,gabl);
-
-// }
