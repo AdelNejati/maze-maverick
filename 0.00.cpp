@@ -211,7 +211,9 @@ void save_data(string player_name,string  time,string result,string file_name,st
 string find_path();
 void output_last_ten();
 void history_menu(); 
+void output_list_user(int i);
 void users_list();
+void output_amar(string s);
 bool gand(int **path, int xx, int yy, int l, int x, int y)
 {
     if ((is_on_the_path(path, xx + 1, yy, l) || xx + 1 >= x) && (is_on_the_path(path, xx - 1, yy, l) || xx - 1 < 0) && (is_on_the_path(path, xx, yy + 1, l) || yy + 1 >= y) && (is_on_the_path(path, xx, yy - 1, l) || yy - 1 < 0))
@@ -1546,5 +1548,143 @@ void save_data(string player_name,string  time,string result,string file_name,st
     C.close();
 
 
+
+}
+
+
+
+
+vector<pair<int, string>> ul;
+void users_list()
+{
+    clean();
+    int index;
+    string s;
+    string path = find_path() + (char)92 + (char)92 + "Users";
+    int i = 0;
+    while (i != ul.size())
+    {
+        ul.pop_back();
+    }
+
+    struct stat sb;
+    ul.push_back(make_pair(0, "Back to menu"));
+    int iii = 1;
+    for (const auto &entry : fs::directory_iterator(path))
+    {
+        iii++;
+        filesystem::path outfilename = entry.path();
+        string outfilename_str = outfilename.string();
+        const char *path = outfilename_str.c_str();
+        if (stat(path, &sb) == 0 && !(sb.st_mode & S_IFDIR))
+        {
+            index = outfilename_str.find("Users",5);
+            s = outfilename_str.substr(index +6);
+            ul.push_back(make_pair(iii, s));
+            // cout<<s;
+        }
+    }
+    i = 0;
+    output_list_user(0);
+    char q = 'm';
+    // cout<<"FGFHF";
+    // cin>>q;
+
+    while ((int)q != 13)
+    {
+        q = getch();
+        if ((int)q == 72 && i - 1 >= 0)
+        {
+            i--;
+        }
+        else if ((int)q == 80 && (i + 1) < iii)
+        {
+            i++;
+        }
+
+        clean();
+
+        output_list_user(i);
+    }
+    if (ul[i].second == "Back to menu")
+    {
+        return;
+    }
+
+// cout<<"here";
+    string f = "";
+// cin>>f;
+    f = "Users";
+    f = f + (char)92;
+    f = f + ul[i].second;
+    output_amar(f);
+    clean();
+}
+void output_list_user(int i)
+{
+    int ii = 0;
+    while (ii != ul.size())
+    {
+
+        if (i == ii)
+        {
+            print(ul[ii].second, color_green, color_black);
+            cout << "\n";
+        }
+        else
+        {
+            cout << ul[ii].second << "\n";
+        }
+        ii++;
+    }
+}
+void output_amar(string s){
+    clean();
+    ifstream A(s);
+    string t;
+    int i=0,j=0;
+    while(getline(A,t)){
+        i++;
+    }
+    A.close();
+    ifstream B(s);    
+    double time,tt=0, times;
+    int wc=0;
+    bool flag=1;
+    while(j!=i/2){
+        B>>t>>t>>t;
+        if(t=="WON"){
+            wc++;
+        }
+        B>>time;
+        if(flag){
+            times=time;
+            flag=0;
+        }
+        // cout<<time<<" "<<tt<<"\n";
+        tt+=time;
+        B>>t>>t>>t;
+        B>>t>>t>>t;
+        // B>>t;
+
+
+
+
+
+
+
+
+        j++;
+    }
+B.close();
+
+cout<<"Total games :"<<i/2;
+
+cout<<"\nGames won:"<<wc;
+cout<<"\nTotal time:"<<tt;
+cout<<"\nlast time:"<<times;
+
+
+char q=getch();
 
 }
