@@ -9,6 +9,7 @@
 #include <chrono>
 #include <filesystem>
 #include <string>
+#include <ctime>
 #include <sys/stat.h>
 #include <conio.h>
 using namespace std;
@@ -218,7 +219,21 @@ bool gand(int **path, int xx, int yy, int l, int x, int y)
     }
     return 0;
 }
-
+// time_t parseDateTime(const char* datetimeString, const char* format)
+// {
+//     struct tm tmStruct;
+//     strftime(datetimeString, format, &tmStruct);
+//     return mktime(&tmStruct);
+// }
+ 
+// // Function to format a time_t value into a date or time string.
+// string DateTime(time_t time, const char* format)
+// {
+//     char buffer[90];
+//     struct tm* timeinfo = localtime(&time);
+//     strftime(buffer, sizeof(buffer), format, timeinfo);
+//     return buffer;
+// }
 // for getch
 
 #ifdef __MINGW32__
@@ -1461,6 +1476,28 @@ A.close();
 cin>>s;
 
 
+
+
+
+}
+
+
+
+void save_data(string player_name,string  time,string result,string file_name,string date){
+
+    auto start = std::chrono::system_clock::now();
+    // Some computation here
+    auto end = std::chrono::system_clock::now();
+ 
+    std::chrono::duration<double> elapsed_seconds = end-start;
+    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+ 
+    std::cout << "finished computation at " << std::ctime(&end_time)
+              << "elapsed time: " << elapsed_seconds.count() << "s"
+              << std::endl;
+    ofstream A ("C:\\Users\\ASUS\\Desktop\\project bp\\Stats\\history.txt",ios::app);
+    A<<"\n";
+    A.close();
 
 
 
