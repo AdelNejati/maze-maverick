@@ -207,11 +207,12 @@ bool is_on_the_path(int **path, int xx, int yy, int l);
 void output_list(int i);
 bool gandz(int **path, int xx, int yy, int l, int x, int y, int uc, int rc, int dc, int lc);
 bool find(int **table, int l, int x, int y, int xx, int yy, int i, int **path, int sum, bool end);
-void save_data(string player_name,string  time,string result,string file_name,string date);
+void save_data(string player_name, string time, string result, string file_name, string date);
 string find_path();
 void output_last_ten();
-void history_menu(); 
+void history_menu();
 void output_list_user(int i);
+void leaderboard();
 void users_list();
 void output_amar(string s);
 bool gand(int **path, int xx, int yy, int l, int x, int y)
@@ -228,7 +229,7 @@ bool gand(int **path, int xx, int yy, int l, int x, int y)
 //     strftime(datetimeString, format, &tmStruct);
 //     return mktime(&tmStruct);
 // }
- 
+
 // // Function to format a time_t value into a date or time string.
 // string DateTime(time_t time, const char* format)
 // {
@@ -732,18 +733,20 @@ void read_file(string s, string ss)
     if (ss == "play")
     {
         string name;
-        int i=s.size();
-        while(i!=0){
-            if(s[i]==(char)92){
+        int i = s.size();
+        while (i != 0)
+        {
+            if (s[i] == (char)92)
+            {
                 break;
             }
-            name=s[i]+name;
+            name = s[i] + name;
             i--;
         }
-        playground(table, l, x, y,name);
+        playground(table, l, x, y, name);
     }
 }
-void playground(int **table, int l, int x, int y,string file_name)
+void playground(int **table, int l, int x, int y, string file_name)
 {
     char q;
     int xx = 0, yy = 0;
@@ -757,20 +760,12 @@ void playground(int **table, int l, int x, int y,string file_name)
         }
     }
     string player_name;
-    cout<<"Enter your name : ";
-    cin>>player_name;
+    cout << "Enter your name : ";
+    cin >> player_name;
 
-string result,time,date;
+    string result, time, date;
 
     auto start = chrono::steady_clock::now();
-
-    // for (int i = 0; i < l; i++)
-    // {
-    //     for (int j = 0; j < 2; j++)
-    //     {
-    //         path[i][j] = x;
-    //     }
-    // }
     map_output(x, y, table, xx, yy, path, l);
 
     int sum = table[0][0];
@@ -781,7 +776,18 @@ string result,time,date;
         cout << "\nTarget Path length : " << l;
         if ((is_on_the_path(path, xx + 1, yy, l) || xx + 1 >= x || (table[xx + 1][yy] == 0 && xx != x - 1 && yy != y - 1)) && (is_on_the_path(path, xx - 1, yy, l) || xx - 1 < 0 || (table[xx - 1][yy] == 0 && xx != x - 1 && yy != y - 1)) && (is_on_the_path(path, xx, yy + 1, l) || yy + 1 >= y || (table[xx][yy + 1] == 0 && xx != x - 1 && yy != y - 1)) && (is_on_the_path(path, xx, yy - 1, l) || yy - 1 < 0 || (table[xx][yy - 1] == 0 && xx != x - 1 && yy != y - 1)))
         {
-            print("\nyou lost!!\n", color_red, color_black);
+            clean();
+            map_output(x, y, table, xx, yy, path, l);
+            print("\nyou lost!!", color_red, color_black);
+
+            cout << "\nyour path sum : " << sum;
+            cout << "\nYour Path length : " << i;
+            cout << "\nTarget Path length : " << l;
+            auto end = chrono::steady_clock::now();
+            auto diff = end - start;
+            cout << "\nTime spending: " << fixed << setprecision(2) << chrono::duration<double>(diff).count() << " s";
+            time = to_string(chrono::duration<double>(diff).count());
+            save_data(player_name, time, result, file_name, date);
             break;
         }
         q = getch();
@@ -840,7 +846,7 @@ string result,time,date;
                 cout << "\nYour sum : " << sum - table[x - 1][y - 1];
                 cout << "\nYour path length : " << i;
                 cout << "\nTarget Path length : " << l;
-                result="WON";
+                result = "WON";
             }
             else
             {
@@ -848,11 +854,11 @@ string result,time,date;
                 cout << "\nYour sum : " << sum - table[x - 1][y - 1];
                 cout << "\nYour path length : " << i;
                 cout << "\nTarget Path length : " << l;
-                result="LOST";
+                result = "LOST";
             }
             cout << "\nTime spending: " << fixed << setprecision(2) << chrono::duration<double>(diff).count() << " s";
-            time= to_string(chrono::duration<double>(diff).count());
-            save_data(player_name, time,result,file_name,date);
+            time = to_string(chrono::duration<double>(diff).count());
+            save_data(player_name, time, result, file_name, date);
             break;
         }
     }
@@ -1279,10 +1285,11 @@ int main()
             }
             if (x == 7)
             {
-               history_menu(); 
+                history_menu();
             }
             if (x == 8)
             {
+                leaderboard();
             }
             if (x == 9)
             {
@@ -1403,47 +1410,46 @@ bool find(int **table, int l, int x, int y, int xx, int yy, int i, int **path, i
     return 0;
 }
 
+void history_menu_out(int x)
+{
 
-
-
-void history_menu_out(int x){
-
-        if (x==1)
-        {
-            print("Back to menu", color_green, color_black);
-            cout << "\n";
-        }
-        else
-        {
-            cout <<"Back to menu\n";
-        }
-        if (x==2)
-        {
-            print("History of players", color_green, color_black);
-            cout << "\n";
-        }
-        else
-        {
-            cout <<"History of players\n";
-        }
-        if (x==3)
-        {
-            print("Last 10 games", color_green, color_black);
-            cout << "\n";
-        }
-        else
-        {
-            cout <<"Last 10 games\n";
-        }
-
+    if (x == 1)
+    {
+        print("Back to menu", color_green, color_black);
+        cout << "\n";
+    }
+    else
+    {
+        cout << "Back to menu\n";
+    }
+    if (x == 2)
+    {
+        print("History of players", color_green, color_black);
+        cout << "\n";
+    }
+    else
+    {
+        cout << "History of players\n";
+    }
+    if (x == 3)
+    {
+        print("Last 10 games", color_green, color_black);
+        cout << "\n";
+    }
+    else
+    {
+        cout << "Last 10 games\n";
+    }
 }
 
-void history_menu(){
+void history_menu()
+{
     clean();
     char q;
-    int x=1;
+    int x = 1;
     history_menu_out(x);
-    while(1){
+    while (1)
+    {
 
         q = getch();
 
@@ -1455,104 +1461,97 @@ void history_menu(){
         {
             x++;
         }
-        if(q==13){
-            if(x==1){
+        if (q == 13)
+        {
+            if (x == 1)
+            {
                 return;
             }
-            else if(x==2){
+            else if (x == 2)
+            {
                 users_list();
             }
-            else if(x==3){
+            else if (x == 3)
+            {
                 output_last_ten();
             }
-
         }
         clean();
-    history_menu_out(x);
+        history_menu_out(x);
     }
 }
 
+void output_last_ten()
+{
+    string s = find_path() + (char)92 + (char)92 + "Stats" + (char)92 + (char)92 + "history.txt";
+    // cout<<s;
+    ifstream A(s);
+    int i = 0;
+    string p;
+    clean();
+    cout << "Last ten games : \n";
+    while (i < 20)
+    {
+        getline(A, p);
+        cout << p << "\n";
 
-void output_last_ten(){
-string s=find_path()+(char)92+(char)92+"Stats"+(char)92+(char)92+"history.txt";
-// cout<<s;
-ifstream A(s);
-int i=0;
-string p;
-clean();
-cout<<"Last ten games : \n";
-while(i<20){
-    getline(A,p);
-    cout<<p<<"\n";
+        i++;
+    }
+    A.close();
 
-i++;
-}
-A.close();
-
-
-
-            cout << "\nPress any key to continue";
-            char q = getch();
-
+    cout << "\nPress any key to continue";
+    char q = getch();
 }
 
-
-
-void save_data(string player_name,string  time,string result,string file_name,string date){
+void save_data(string player_name, string time, string result, string file_name, string date)
+{
 
     auto start = std::chrono::system_clock::now();
     // Some computation here
     auto end = std::chrono::system_clock::now();
- 
-    std::chrono::duration<double> elapsed_seconds = end-start;
+
+    std::chrono::duration<double> elapsed_seconds = end - start;
     std::time_t end_time = std::chrono::system_clock::to_time_t(end);
- 
-    std::cout << "finished computation at " << std::ctime(&end_time)
-              << "elapsed time: " << elapsed_seconds.count() << "s"
-              << std::endl;
-              string gably,t;
-    ifstream B ("Stats\\history.txt");      
-    while(getline(B,t)){
-        
-        gably=gably+t+"\n";
 
-    }       
+    string gably, t;
+    ifstream B("Stats\\history.txt");
+    while (getline(B, t))
+    {
+
+        gably = gably + t + "\n";
+    }
     B.close();
-    ofstream A ("Stats\\history.txt");
+    ofstream A("Stats\\history.txt");
 
-    A<<player_name;
-    A<<"    "<<file_name;
-    A<<"    "<<result;
-    A<<"    "<<time[0]<<time[1]<<time[2]<<time[3]<<" s";
-    A<<"    "<<std::ctime(&end_time);
-    A<<"\n"<<gably;
+    A << player_name;
+    A << "    " << file_name;
+    A << "    " << result;
+    A << "    " << time[0] << time[1] << time[2] << time[3] << " s";
+    A << "    " << std::ctime(&end_time);
+    A << "\n"
+      << gably;
     A.close();
-    string user_path=player_name;
-    user_path="Users\\"+user_path+".txt";
-    gably="";
-     ifstream D (user_path);      
-    while(getline(D,t)){
-        
-        gably=gably+t+"\n";
+    string user_path = player_name;
+    user_path = "Users\\" + user_path + ".txt";
+    gably = "";
+    ifstream D(user_path);
+    while (getline(D, t))
+    {
 
-    }       
+        gably = gably + t + "\n";
+    }
     D.close();
- 
-        ofstream C (user_path);
-    C<<player_name;
-    C<<"    "<<file_name;
-    C<<"    "<<result;
-    C<<"    "<<time[0]<<time[1]<<time[2]<<time[3]<<" s";
-    C<<"    "<<std::ctime(&end_time);
-    C<<"\n"<<gably;
+
+    ofstream C(user_path);
+    C << player_name;
+    C << "    " << file_name;
+    C << "    " << result;
+    C << "    " << time[0] << time[1] << time[2] << time[3] << " s";
+    C << "    " << std::ctime(&end_time);
+    C << "\n"
+      << gably;
     C.close();
-
-
-
 }
-
-
-
 
 vector<pair<int, string>> ul;
 void users_list()
@@ -1578,8 +1577,8 @@ void users_list()
         const char *path = outfilename_str.c_str();
         if (stat(path, &sb) == 0 && !(sb.st_mode & S_IFDIR))
         {
-            index = outfilename_str.find("Users",5);
-            s = outfilename_str.substr(index +6);
+            index = outfilename_str.find("Users", 5);
+            s = outfilename_str.substr(index + 6);
             ul.push_back(make_pair(iii, s));
             // cout<<s;
         }
@@ -1611,9 +1610,9 @@ void users_list()
         return;
     }
 
-// cout<<"here";
+    // cout<<"here";
     string f = "";
-// cin>>f;
+    // cin>>f;
     f = "Users";
     f = f + (char)92;
     f = f + ul[i].second;
@@ -1638,53 +1637,157 @@ void output_list_user(int i)
         ii++;
     }
 }
-void output_amar(string s){
+void output_amar(string s)
+{
     clean();
     ifstream A(s);
     string t;
-    int i=0,j=0;
-    while(getline(A,t)){
+    int i = 0, j = 0;
+    while (getline(A, t))
+    {
         i++;
     }
     A.close();
-    ifstream B(s);    
-    double time,tt=0, times;
-    int wc=0;
-    bool flag=1;
-    while(j!=i/2){
-        B>>t>>t>>t;
-        if(t=="WON"){
+    ifstream B(s);
+    double time, tt = 0, times;
+    int wc = 0;
+    bool flag = 1;
+    while (j != i / 2)
+    {
+        B >> t >> t >> t;
+        if (t == "WON")
+        {
             wc++;
         }
-        B>>time;
-        if(flag){
-            times=time;
-            flag=0;
+        B >> time;
+        if (flag)
+        {
+            times = time;
+            flag = 0;
         }
-        // cout<<time<<" "<<tt<<"\n";
-        tt+=time;
-        B>>t>>t>>t;
-        B>>t>>t>>t;
-        // B>>t;
-
-
-
-
-
-
-
-
+        tt += time;
+        B >> t >> t >> t;
+        B >> t >> t >> t;
         j++;
     }
-B.close();
+    B.close();
 
-cout<<"Total games :"<<i/2;
+    cout << "Total games :" << i / 2;
 
-cout<<"\nGames won:"<<wc;
-cout<<"\nTotal time:"<<tt;
-cout<<"\nlast time:"<<times;
+    cout << "\nGames won:" << wc;
+    cout << "\nTotal time:" << tt;
+    cout << "\nlast time:" << times;
 
+    char q = getch();
+}
 
-char q=getch();
+struct info
+{
+    string name;
+    int wr;
+    double tt;
+};
 
+vector<pair<int, string>> users;
+void leaderboard()
+{
+    clean();
+    string s;
+    string path = find_path() + (char)92 + (char)92 + "Users";
+    int i = 0;
+    while (i != users.size())
+    {
+        users.pop_back();
+    }
+
+    struct stat sb;
+    int iii = 1;
+    for (const auto &entry : fs::directory_iterator(path))
+    {
+        iii++;
+        filesystem::path outfilename = entry.path();
+        string outfilename_str = outfilename.string();
+        const char *path = outfilename_str.c_str();
+        if (stat(path, &sb) == 0 && !(sb.st_mode & S_IFDIR))
+        {
+            users.push_back(make_pair(iii, outfilename_str));
+        }
+    }
+    int oo = 0;
+    char q = 'm';
+    info all[users.size()];
+    while (oo != users.size())
+    {
+
+        ifstream A(users[oo].second);
+        string t;
+        int i = 0, j = 0;
+        while (getline(A, t))
+        {
+            i++;
+        }
+        A.close();
+        ifstream B(users[oo].second);
+        double time, tt = 0, times;
+        int wc = 0;
+        while (j != i / 2)
+        {
+            B >> t;
+            all[oo].name = t;
+            B >> t >> t;
+            if (t == "WON")
+            {
+                wc++;
+            }
+            all[oo].wr = wc;
+            B >> time;
+            tt += time;
+            B >> t >> t >> t;
+            B >> t >> t >> t;
+            j++;
+        }
+        all[oo].tt = tt;
+        B.close();
+        oo++;
+    }
+    oo = 0;
+    int fs=0,ss=0,ts=0;
+//     while (oo != users.size())
+//     {
+// cout<<all[oo].name<<"     Win rate : "<<all[oo].wr<<"     Total time : "<<all[oo].tt<<"\n";
+//         oo++;
+//     }
+    oo=0;
+    while (oo != users.size())
+    {
+        if((all[oo].wr>all[fs].wr||(all[oo].wr==all[fs].wr&&all[oo].tt<all[fs].tt))&&oo!=fs&&oo!=ss){
+            fs=oo;
+            // cout<<fs;
+        }
+        oo++;
+    }
+    oo=0;
+    while (oo != users.size())
+    {
+        if((all[oo].wr>all[ss].wr||(all[oo].wr==all[ss].wr&&all[oo].tt<all[ss].tt))&&oo!=fs&&oo!=ss){
+            ss=oo;
+                        // cout<<ss;
+        }
+        oo++;
+    }
+    oo=0;
+    while (oo != users.size())
+    {
+        if((all[oo].wr>all[ts].wr||(all[oo].wr==all[ts].wr&&all[oo].tt<all[ts].tt))&&oo!=fs&&oo!=ss){
+            ts=oo;
+            // cout<<ts;
+        }
+        oo++;
+    }
+    cout<<all[fs].name<<"     Win rate : "<<all[fs].wr<<"     Total time : "<<all[fs].tt<<"\n";
+    cout<<all[ss].name<<"     Win rate : "<<all[ss].wr<<"     Total time : "<<all[ss].tt<<"\n";
+    cout<<all[ts].name<<"     Win rate : "<<all[ts].wr<<"     Total time : "<<all[ts].tt<<"\n";
+    cin >> oo;
+
+    clean();
 }
