@@ -211,6 +211,7 @@ void save_data(string player_name,string  time,string result,string file_name,st
 string find_path();
 void output_last_ten();
 void history_menu(); 
+void users_list();
 bool gand(int **path, int xx, int yy, int l, int x, int y)
 {
     if ((is_on_the_path(path, xx + 1, yy, l) || xx + 1 >= x) && (is_on_the_path(path, xx - 1, yy, l) || xx - 1 < 0) && (is_on_the_path(path, xx, yy + 1, l) || yy + 1 >= y) && (is_on_the_path(path, xx, yy - 1, l) || yy - 1 < 0))
@@ -1457,7 +1458,7 @@ void history_menu(){
                 return;
             }
             else if(x==2){
-
+                users_list();
             }
             else if(x==3){
                 output_last_ten();
@@ -1477,19 +1478,19 @@ ifstream A(s);
 int i=0;
 string p;
 clean();
-cout<<"Last ten games : ";
-while(i<10){
+cout<<"Last ten games : \n";
+while(i<20){
     getline(A,p);
     cout<<p<<"\n";
 
 i++;
 }
 A.close();
-cin>>s;
 
 
 
-
+            cout << "\nPress any key to continue";
+            char q = getch();
 
 }
 
@@ -1524,6 +1525,25 @@ void save_data(string player_name,string  time,string result,string file_name,st
     A<<"    "<<std::ctime(&end_time);
     A<<"\n"<<gably;
     A.close();
+    string user_path=player_name;
+    user_path="Users\\"+user_path+".txt";
+    gably="";
+     ifstream D (user_path);      
+    while(getline(D,t)){
+        
+        gably=gably+t+"\n";
+
+    }       
+    D.close();
+ 
+        ofstream C (user_path);
+    C<<player_name;
+    C<<"    "<<file_name;
+    C<<"    "<<result;
+    C<<"    "<<time[0]<<time[1]<<time[2]<<time[3]<<" s";
+    C<<"    "<<std::ctime(&end_time);
+    C<<"\n"<<gably;
+    C.close();
 
 
 
