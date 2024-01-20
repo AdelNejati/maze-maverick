@@ -206,6 +206,7 @@ bool is_on_the_path(int **path, int xx, int yy, int l);
 void output_list(int i);
 bool gandz(int **path, int xx, int yy, int l, int x, int y, int uc, int rc, int dc, int lc);
 bool find(int **table, int l, int x, int y, int xx, int yy, int i, int **path, int sum, bool end);
+void save_data(string player_name,string  time,string result,string file_name,string date);
 string find_path();
 void output_last_ten();
 void history_menu(); 
@@ -728,16 +729,21 @@ void playground(int **table, int l, int x, int y)
             path[i][j] = x;
         }
     }
+    string player_name;
+    cout<<"Enter your name : ";
+    cin>>player_name;
+
+string file_name,result,time,date;
 
     auto start = chrono::steady_clock::now();
 
-    for (int i = 0; i < l; i++)
-    {
-        for (int j = 0; j < 2; j++)
-        {
-            path[i][j] = x;
-        }
-    }
+    // for (int i = 0; i < l; i++)
+    // {
+    //     for (int j = 0; j < 2; j++)
+    //     {
+    //         path[i][j] = x;
+    //     }
+    // }
     map_output(x, y, table, xx, yy, path, l);
 
     int sum = table[0][0];
@@ -807,17 +813,18 @@ void playground(int **table, int l, int x, int y)
                 cout << "\nYour sum : " << sum - table[x - 1][y - 1];
                 cout << "\nYour path length : " << i;
                 cout << "\nTarget Path length : " << l;
+                result="WON";
             }
             else
             {
                 print("\nYOU LOST!!", color_red, color_black);
                 cout << "\nYour sum : " << sum - table[x - 1][y - 1];
-
                 cout << "\nYour path length : " << i;
                 cout << "\nTarget Path length : " << l;
+                result="LOST";
             }
             cout << "\nTime spending: " << fixed << setprecision(2) << chrono::duration<double>(diff).count() << " s";
-
+            save_data(player_name, time,result,file_name,date);
             break;
         }
     }
@@ -1429,14 +1436,29 @@ void history_menu(){
             }
             else if(x==3){
                 output_last_ten();
-
             }
 
         }
         clean();
     history_menu_out(x);
     }
+}
 
+
+void output_last_ten(){
+string s=find_path()+(char)92+(char)92+"Stats"+(char)92+(char)92+"history.txt";
+// cout<<s;
+ifstream A(s);
+int i=0;
+string p;
+while(i<10){
+    getline(A,p);
+    cout<<p<<"\n";
+
+i++;
+}
+A.close();
+cin>>s;
 
 
 
