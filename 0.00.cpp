@@ -201,7 +201,7 @@ void print_no_reset(const string &s, const int textcolor, const int backgroundco
     cout << s;
 }
 // inja baray declear
-void playground(int **table, int l, int x, int y);
+void playground(int **table, int l, int x, int y, string file_name);
 bool make_path(int **path, int xx, int yy, int l, int x, int y, int **table, int maxv, int minv, int maxb, int minb);
 bool is_on_the_path(int **path, int xx, int yy, int l);
 void output_list(int i);
@@ -728,10 +728,19 @@ void read_file(string s, string ss)
     }
     if (ss == "play")
     {
-        playground(table, l, x, y);
+        string name;
+        int i=s.size();
+        while(i!=0){
+            if(s[i]==(char)92){
+                break;
+            }
+            name=s[i]+name;
+            i--;
+        }
+        playground(table, l, x, y,name);
     }
 }
-void playground(int **table, int l, int x, int y)
+void playground(int **table, int l, int x, int y,string file_name)
 {
     char q;
     int xx = 0, yy = 0;
@@ -748,7 +757,7 @@ void playground(int **table, int l, int x, int y)
     cout<<"Enter your name : ";
     cin>>player_name;
 
-string file_name,result,time,date;
+string result,time,date;
 
     auto start = chrono::steady_clock::now();
 
@@ -839,6 +848,7 @@ string file_name,result,time,date;
                 result="LOST";
             }
             cout << "\nTime spending: " << fixed << setprecision(2) << chrono::duration<double>(diff).count() << " s";
+            time= to_string(chrono::duration<double>(diff).count());
             save_data(player_name, time,result,file_name,date);
             break;
         }
@@ -1466,6 +1476,8 @@ string s=find_path()+(char)92+(char)92+"Stats"+(char)92+(char)92+"history.txt";
 ifstream A(s);
 int i=0;
 string p;
+clean();
+cout<<"Last ten games : ";
 while(i<10){
     getline(A,p);
     cout<<p<<"\n";
@@ -1495,8 +1507,22 @@ void save_data(string player_name,string  time,string result,string file_name,st
     std::cout << "finished computation at " << std::ctime(&end_time)
               << "elapsed time: " << elapsed_seconds.count() << "s"
               << std::endl;
-    ofstream A ("C:\\Users\\ASUS\\Desktop\\project bp\\Stats\\history.txt",ios::app);
-    A<<"\n";
+              string gably,t;
+    ifstream B ("Stats\\history.txt");      
+    while(getline(B,t)){
+        
+        gably=gably+t+"\n";
+
+    }       
+    B.close();
+    ofstream A ("Stats\\history.txt");
+
+    A<<player_name;
+    A<<"    "<<file_name;
+    A<<"    "<<result;
+    A<<"    "<<time[0]<<time[1]<<time[2]<<time[3]<<" s";
+    A<<"    "<<std::ctime(&end_time);
+    A<<"\n"<<gably;
     A.close();
 
 
