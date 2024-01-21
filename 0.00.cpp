@@ -503,7 +503,7 @@ void create_map(string s)
     {
         return;
     }
-
+    clean();
     cout << "\nEnter number of lines : ";
     cin >> x;
     // cin>>x;
@@ -726,7 +726,11 @@ void read_file(string s, string ss)
                 path[i][j] = x;
             }
         }
-        find(table, l, x, y, 0, 0, 0, path, table[0][0], 0);
+        if(!find(table, l, x, y, 0, 0, 0, path, table[0][0], 0)){
+            cout<< "There is no any path";
+            cout << "\nPress any key to continue";
+            q = getch();
+        }
         // cout << "\npress any key to continue";
         // q = getch();
     }
@@ -839,7 +843,7 @@ void playground(int **table, int l, int x, int y, string file_name)
         {
             auto end = chrono::steady_clock::now();
             auto diff = end - start;
-            if (i == l && sum / 2 == table[x - 1][y - 1])
+            if (i == l && (float)sum / 2.0 == table[x - 1][y - 1])
             {
                 cout << "\n";
                 print("YOU WON!!", color_green, color_black);
@@ -1062,7 +1066,7 @@ bool gandz(int **path, int xx, int yy, int l, int x, int y, int uc, int rc, int 
 void menu(int n)
 {
     print("1. ", color_red, color_black);
-    cout << "Create a New Map\n";
+    cout << "Create a new map\n";
     print("  -1.1 ", color_red, color_black);
     if (n == 1)
     {
@@ -1086,40 +1090,40 @@ void menu(int n)
     print("  -2.1 ", color_red, color_black);
     if (n == 3)
     {
-        print("  Choose from Existing Maps\n", color_green, color_black);
+        print("  Choose from existing maps\n", color_green, color_black);
     }
     else
     {
-        print("  Choose from Existing Maps\n", color_white, color_black);
+        print("  Choose from existing maps\n", color_white, color_black);
     }
     print("  -2.2 ", color_red, color_black);
     if (n == 4)
     {
-        print("  Import a Custom Map\n", color_green, color_black);
+        print("  Import a custom map\n", color_green, color_black);
     }
     else
     {
-        print("  Import a Custom Map\n", color_white, color_black);
+        print("  Import a custom map\n", color_white, color_black);
     }
     print("3. ", color_red, color_black);
     cout << "Solve a Maze\n";
     print("  -3.1 ", color_red, color_black);
     if (n == 5)
     {
-        print("  Choose from Existing Maps\n", color_green, color_black);
+        print("  Choose from existing maps\n", color_green, color_black);
     }
     else
     {
-        print("  Choose from Existing Maps\n", color_white, color_black);
+        print("  Choose from existing maps\n", color_white, color_black);
     }
     print("  -3.2 ", color_red, color_black);
     if (n == 6)
     {
-        print("  Import a Custom Map\n", color_green, color_black);
+        print("  Import a custom map\n", color_green, color_black);
     }
     else
     {
-        print("  Import a Custom Map\n", color_white, color_black);
+        print("  Import a custom map\n", color_white, color_black);
     }
     print("4. ", color_red, color_black);
     if (n == 7)
@@ -1651,6 +1655,7 @@ void output_amar(string s)
     ifstream B(s);
     double time, tt = 0, times;
     int wc = 0;
+    string date;
     bool flag = 1;
     while (j != i / 2)
     {
@@ -1660,23 +1665,46 @@ void output_amar(string s)
             wc++;
         }
         B >> time;
+
+        tt += time;
+        B >> t;
+
+        B >> t;
         if (flag)
         {
-            times = time;
+            date = date + " " + t;
+        }
+        B >> t;
+        if (flag)
+        {
+            date = date + " " + t;
+        }
+        B >> t;
+        if (flag)
+        {
+            date = date + " " + t;
+        }
+        B >> t;
+        if (flag)
+        {
+            date = date + " " + t;
+        }
+
+        B >> t;
+        if (flag)
+        {
+            date = date + " " + t;
             flag = 0;
         }
-        tt += time;
-        B >> t >> t >> t;
-        B >> t >> t >> t;
         j++;
     }
     B.close();
 
-    cout << "Total games :" << i / 2;
+    cout << "Total games : " << i / 2;
 
-    cout << "\nGames won:" << wc;
-    cout << "\nTotal time:" << tt;
-    cout << "\nlast time:" << times;
+    cout << "\nGames won : " << wc;
+    cout << "\nTotal time : " << tt;
+    cout << "\nlast date : " << date;
 
     char q = getch();
 }
@@ -1751,42 +1779,45 @@ void leaderboard()
         oo++;
     }
     oo = 0;
-    int fs=0,ss=0,ts=0;
-//     while (oo != users.size())
-//     {
-// cout<<all[oo].name<<"     Win rate : "<<all[oo].wr<<"     Total time : "<<all[oo].tt<<"\n";
-//         oo++;
-//     }
-    oo=0;
+    int fs = 0, ss = 0, ts = 0;
+    //     while (oo != users.size())
+    //     {
+    // cout<<all[oo].name<<"     Win rate : "<<all[oo].wr<<"     Total time : "<<all[oo].tt<<"\n";
+    //         oo++;
+    //     }
+    oo = 0;
     while (oo != users.size())
     {
-        if((all[oo].wr>all[fs].wr||(all[oo].wr==all[fs].wr&&all[oo].tt<all[fs].tt))&&oo!=fs&&oo!=ss){
-            fs=oo;
+        if ((all[oo].wr > all[fs].wr || (all[oo].wr == all[fs].wr && all[oo].tt < all[fs].tt)) && oo != fs && oo != ss)
+        {
+            fs = oo;
             // cout<<fs;
         }
         oo++;
     }
-    oo=0;
+    oo = 0;
     while (oo != users.size())
     {
-        if((all[oo].wr>all[ss].wr||(all[oo].wr==all[ss].wr&&all[oo].tt<all[ss].tt))&&oo!=fs&&oo!=ss){
-            ss=oo;
-                        // cout<<ss;
+        if ((all[oo].wr > all[ss].wr || (all[oo].wr == all[ss].wr && all[oo].tt < all[ss].tt)) && oo != fs && oo != ss)
+        {
+            ss = oo;
+            // cout<<ss;
         }
         oo++;
     }
-    oo=0;
+    oo = 0;
     while (oo != users.size())
     {
-        if((all[oo].wr>all[ts].wr||(all[oo].wr==all[ts].wr&&all[oo].tt<all[ts].tt))&&oo!=fs&&oo!=ss){
-            ts=oo;
+        if ((all[oo].wr > all[ts].wr || (all[oo].wr == all[ts].wr && all[oo].tt < all[ts].tt)) && oo != fs && oo != ss)
+        {
+            ts = oo;
             // cout<<ts;
         }
         oo++;
     }
-    cout<<all[fs].name<<"     Win rate : "<<all[fs].wr<<"     Total time : "<<all[fs].tt<<"\n";
-    cout<<all[ss].name<<"     Win rate : "<<all[ss].wr<<"     Total time : "<<all[ss].tt<<"\n";
-    cout<<all[ts].name<<"     Win rate : "<<all[ts].wr<<"     Total time : "<<all[ts].tt<<"\n";
+    cout << all[fs].name << "     Win rate : " << all[fs].wr << "     Total time : " << all[fs].tt << "\n";
+    cout << all[ss].name << "     Win rate : " << all[ss].wr << "     Total time : " << all[ss].tt << "\n";
+    cout << all[ts].name << "     Win rate : " << all[ts].wr << "     Total time : " << all[ts].tt << "\n";
     cin >> oo;
 
     clean();
