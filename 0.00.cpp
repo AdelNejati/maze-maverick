@@ -13,7 +13,6 @@
 #include <sys/stat.h>
 #include <conio.h>
 
-
 #define LTARROW 0x4B
 #define RTARROW 0x4D
 #define UPARROW 0x48
@@ -30,7 +29,6 @@
 #define F8_Key 0x4200
 #define F9_Key 0x4300
 #define F10_Key 0x4400
-
 
 #define color_black 0
 #define color_dark_blue 1
@@ -49,16 +47,13 @@
 #define color_yellow 14
 #define color_white 15
 
-
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #define VC_EXTRALEAN
 #endif
 
-
 using namespace std;
 namespace fs = filesystem;
-
 
 string get_textcolor_code(const int textcolor)
 { // Linux only
@@ -101,7 +96,6 @@ string get_textcolor_code(const int textcolor)
     }
 }
 
-
 string get_backgroundcolor_code(const int backgroundcolor)
 { // Linux only
     switch (backgroundcolor)
@@ -143,18 +137,15 @@ string get_backgroundcolor_code(const int backgroundcolor)
     }
 }
 
-
 string get_print_color(const int textcolor)
 { // Linux only
     return "\033[" + get_textcolor_code(textcolor) + "m";
 }
 
-
 string get_print_color(const int textcolor, const int backgroundcolor)
 { // Linux only
     return "\033[" + get_textcolor_code(textcolor) + ";" + get_backgroundcolor_code(backgroundcolor) + "m";
 }
-
 
 void print_color(const int textcolor)
 {
@@ -166,7 +157,6 @@ void print_color(const int textcolor)
 #endif // Windows/Linux
 }
 
-
 void print_color(const int textcolor, const int backgroundcolor)
 {
 #if defined(_WIN32)
@@ -176,7 +166,6 @@ void print_color(const int textcolor, const int backgroundcolor)
     cout << get_print_color(textcolor, backgroundcolor);
 #endif // Windows/Linux
 }
-
 
 void print_color_reset()
 {
@@ -188,18 +177,15 @@ void print_color_reset()
 #endif // Windows/Linux
 }
 
-
 void println(const string &s = "")
 {
     cout << s << endl;
 }
 
-
 void print(const string &s = "")
 {
     cout << s;
 }
-
 
 void print(const string &s, const int textcolor)
 {
@@ -208,7 +194,6 @@ void print(const string &s, const int textcolor)
     print_color_reset();
 }
 
-
 void print(const string &s, const int textcolor, const int backgroundcolor)
 {
     print_color(textcolor, backgroundcolor);
@@ -216,20 +201,17 @@ void print(const string &s, const int textcolor, const int backgroundcolor)
     print_color_reset();
 }
 
-
 void print_no_reset(const string &s, const int textcolor)
 { // print with color, but don't reset color afterwards (faster)
     print_color(textcolor);
     cout << s;
 }
 
-
 void print_no_reset(const string &s, const int textcolor, const int backgroundcolor)
 { // print with color, but don't reset color afterwards (faster)
     print_color(textcolor, backgroundcolor);
     cout << s;
 }
-
 
 #ifdef __MINGW32__
 const int UP_KEY = 72;
@@ -263,7 +245,7 @@ int getch(void)
 #endif
 
 // inja baraye declare
-bool find(int **table, int l, int x, int y, int xx, int yy, int i, int **path, int sum, bool end);
+bool find_answer(int **table, int length, int x, int y, int xx, int yy, int i, int **path, int sum, bool end);
 void history_menu_out(int x);
 void history_menu();
 void output_last_ten();
@@ -289,7 +271,6 @@ void menu(int n);
 void select_file(string ss);
 void output_list(int i);
 
-
 struct info
 {
     string name;
@@ -297,11 +278,9 @@ struct info
     double tt;
 };
 
-
 vector<pair<int, string>> users;
 vector<pair<int, string>> ps;
 vector<pair<int, string>> ul;
-
 
 int main()
 {
@@ -377,16 +356,15 @@ int main()
     return 0;
 }
 
-
-bool find(int **table, int l, int x, int y, int xx, int yy, int i, int **path, int sum, bool end)
+bool find_answer(int **table, int length, int x, int y, int xx, int yy, int i, int **path, int sum, bool end)
 {
     char q;
-    if ((xx == x - 1 && yy == y - 1) || (i == l))
+    if ((xx == x - 1 && yy == y - 1) || (i == length))
     {
-        if ((float)sum / 2 == table[x - 1][y - 1] && i == l && (xx == x - 1 && yy == y - 1))
+        if ((float)sum / 2 == table[x - 1][y - 1] && i == length && (xx == x - 1 && yy == y - 1))
         {
             clean();
-            map_output(x, y, table, xx, yy, path, l);
+            map_output(x, y, table, xx, yy, path, length);
             cout << "\nPress (Backspace) to return";
             cout << "\nPress any key to show other results if exist";
             q = getch();
@@ -401,12 +379,12 @@ bool find(int **table, int l, int x, int y, int xx, int yy, int i, int **path, i
             return 0;
         }
     }
-    if ((is_on_the_path(path, xx + 1, yy, l) || xx + 1 >= x || table[xx + 1][yy] == 0) && (is_on_the_path(path, xx - 1, yy, l) || xx - 1 < 0 || table[xx - 1][yy] == 0) && (is_on_the_path(path, xx, yy + 1, l) || yy + 1 >= y || table[xx][yy + 1] == 0) && (is_on_the_path(path, xx, yy - 1, l) || yy - 1 < 0 || table[xx][yy - 1] == 0))
+    if ((is_on_the_path(path, xx + 1, yy, length) || xx + 1 >= x || (table[xx + 1][yy] == 0 && xx + 1 != x - 1)) && (is_on_the_path(path, xx - 1, yy, length) || xx - 1 < 0 || (table[xx - 1][yy] == 0 && xx - 1 == x - 1)) && (is_on_the_path(path, xx, yy + 1, length) || yy + 1 >= y || (table[xx][yy + 1] == 0 && yy + 1 == y - 1)) && (is_on_the_path(path, xx, yy - 1, length) || yy - 1 < 0 || table[xx][yy - 1] == 0))
     {
         return 0;
     }
 
-    if (yy + 1 < y && !is_on_the_path(path, xx, yy + 1, l) && table[xx][yy + 1] != 0)
+    if (yy + 1 < y && !is_on_the_path(path, xx, yy + 1, length) && (table[xx][yy + 1] != 0 || (xx == x - 1 && yy + 1 == y - 1)))
     {
         path[i][0] = xx;
         path[i][1] = yy;
@@ -414,7 +392,7 @@ bool find(int **table, int l, int x, int y, int xx, int yy, int i, int **path, i
 
         sum += table[xx][yy];
         i++;
-        if (find(table, l, x, y, xx, yy, i, path, sum, 0))
+        if (find_answer(table, length, x, y, xx, yy, i, path, sum, 0))
         {
             return 1;
         }
@@ -425,14 +403,14 @@ bool find(int **table, int l, int x, int y, int xx, int yy, int i, int **path, i
         sum = sum - table[xx][yy];
         yy = yy - 1;
     }
-    if (xx - 1 >= 0 && !is_on_the_path(path, xx - 1, yy, l) && table[xx - 1][yy] != 0)
+    if (xx - 1 >= 0 && !is_on_the_path(path, xx - 1, yy, length) && (table[xx - 1][yy] != 0 || (xx - 1 == x - 1 && yy == y - 1)))
     {
         path[i][0] = xx;
         path[i][1] = yy;
         xx = xx - 1;
         sum += table[xx][yy];
         i++;
-        if (find(table, l, x, y, xx, yy, i, path, sum, 0))
+        if (find_answer(table, length, x, y, xx, yy, i, path, sum, 0))
         {
             return 1;
         }
@@ -442,14 +420,14 @@ bool find(int **table, int l, int x, int y, int xx, int yy, int i, int **path, i
         sum = sum - table[xx][yy];
         xx = xx + 1;
     }
-    if ((xx + 1) < x && !is_on_the_path(path, xx + 1, yy, l) && table[xx + 1][yy] != 0)
+    if ((xx + 1) < x && !is_on_the_path(path, xx + 1, yy, length) && (table[xx + 1][yy] != 0 || (xx + 1 == x - 1 && yy == y - 1)))
     {
         path[i][0] = xx;
         path[i][1] = yy;
         xx = xx + 1;
         sum += table[xx][yy];
         i++;
-        if (find(table, l, x, y, xx, yy, i, path, sum, 0))
+        if (find_answer(table, length, x, y, xx, yy, i, path, sum, 0))
         {
             return 1;
         }
@@ -459,7 +437,7 @@ bool find(int **table, int l, int x, int y, int xx, int yy, int i, int **path, i
         sum = sum - table[xx][yy];
         xx = xx - 1;
     }
-    if (yy - 1 >= 0 && !is_on_the_path(path, xx, yy - 1, l) && table[xx][yy - 1] != 0)
+    if (yy - 1 >= 0 && !is_on_the_path(path, xx, yy - 1, length) && (table[xx][yy - 1] != 0 || (xx == x - 1 && yy - 1 == y - 1)))
     {
 
         path[i][0] = xx;
@@ -468,7 +446,7 @@ bool find(int **table, int l, int x, int y, int xx, int yy, int i, int **path, i
 
         sum += table[xx][yy];
         i++;
-        if (find(table, l, x, y, xx, yy, i, path, sum, 0))
+        if (find_answer(table, length, x, y, xx, yy, i, path, sum, 0))
         {
             return 1;
         }
@@ -480,7 +458,6 @@ bool find(int **table, int l, int x, int y, int xx, int yy, int i, int **path, i
     }
     return 0;
 }
-
 
 void history_menu_out(int x)
 {
@@ -513,7 +490,6 @@ void history_menu_out(int x)
         cout << "Last 10 games\n";
     }
 }
-
 
 void history_menu()
 {
@@ -554,7 +530,6 @@ void history_menu()
     }
 }
 
-
 void output_last_ten()
 {
     string s = find_path() + (char)92 + (char)92 + "Stats" + (char)92 + (char)92 + "history.txt";
@@ -576,7 +551,6 @@ void output_last_ten()
     cout << "\nPress any key to continue";
     char q = getch();
 }
-
 
 void save_data(string player_name, string time, string result, string file_name, string date)
 {
@@ -627,7 +601,6 @@ void save_data(string player_name, string time, string result, string file_name,
       << gably;
     C.close();
 }
-
 
 void users_list()
 {
@@ -695,7 +668,6 @@ void users_list()
     clean();
 }
 
-
 void output_list_user(int i)
 {
     int ii = 0;
@@ -714,7 +686,6 @@ void output_list_user(int i)
         ii++;
     }
 }
-
 
 void output_amar(string s)
 {
@@ -783,7 +754,6 @@ void output_amar(string s)
     cout << "\nPress any key to continue";
     char q = getch();
 }
-
 
 void leaderboard()
 {
@@ -883,22 +853,67 @@ void leaderboard()
         // cout<<ts;
         oo++;
     }
-    cout << all[fs].name << "     Win rate : " << all[fs].wr << "     Total time : " << all[fs].tt << "\n\n";
+    // cout << all[fs].tt;
+    // cout << endl << to_string(all[fs].tt);
+    // cout << all[fs].name << "     Win rate : " << all[fs].wr << "     Total time : " << all[fs].tt << "\n\n";
+    print(all[fs].name + "     Win rate : " + to_string(all[fs].wr) + "     Total time : ", color_dark_green, color_black);
+    string ty = to_string(all[fs].tt);
+    i = 0;
+    while (1)
+    {
+        if (ty[i] == '.')
+        {
+            print(".", color_dark_green, color_black);
+            print(to_string(ty[i + 1] - 48), color_dark_green, color_black);
+            print(to_string(ty[i + 2] - 48) + "\n\n", color_dark_green, color_black);
+            break;
+        }
+        print(to_string(ty[i] - 48), color_dark_green, color_black);
+        i++;
+    }
     if (users.size() > 1)
     {
-
-        cout << all[ss].name << "     Win rate : " << all[ss].wr << "     Total time : " << all[ss].tt << "\n\n";
+        print(all[ss].name + "     Win rate : " + to_string(all[ss].wr) + "     Total time : ", color_cyan, color_black);
+        ty = to_string(all[ss].tt);
+        i = 0;
+        while (1)
+        {
+            if (ty[i] == '.')
+            {
+                print(".", color_cyan, color_black);
+                print(to_string(ty[i + 1] - 48), color_cyan, color_black);
+                print(to_string(ty[i + 2] - 48) + "\n\n", color_cyan, color_black);
+                break;
+            }
+            print(to_string(ty[i] - 48), color_cyan, color_black);
+            i++;
+        }
+        // cout << all[ss].name << "     Win rate : " << all[ss].wr << "     Total time : " << all[ss].tt << "\n\n";
     }
     if (users.size() > 2)
     {
-        cout << all[ts].name << "     Win rate : " << all[ts].wr << "     Total time : " << all[ts].tt << "\n\n";
+        print(all[ts].name + "     Win rate : " + to_string(all[ts].wr) + "     Total time : ", color_orange, color_black);
+        ty = to_string(all[ts].tt);
+        i = 0;
+        while (1)
+        {
+            if (ty[i] == '.')
+            {
+                print(".", color_orange, color_black);
+                print(to_string(ty[i + 1] - 48), color_orange, color_black);
+                print(to_string(ty[i + 2] - 48) + "\n\n", color_orange, color_black);
+                break;
+            }
+            print(to_string(ty[i] - 48), color_orange, color_black);
+            i++;
+        }
+        // cout << all[ts].name << "     Win rate : " << all[ts].wr << "     Total time : " << all[ts].tt << "\n\n";
     }
     cout << "\nPress any key to continue";
     q = getch();
 
     clean();
 }
-
 
 bool give_path(int **&path, int l, int x, int y, int xx, int yy, int h)
 {
@@ -988,7 +1003,6 @@ bool give_path(int **&path, int l, int x, int y, int xx, int yy, int h)
     return 0;
 }
 
-
 int input_number(string s)
 {
     int i = s.size() - 1, n = 1, num = 0;
@@ -1011,7 +1025,6 @@ int input_number(string s)
     return num;
 }
 
-
 bool gand(int **path, int xx, int yy, int l, int x, int y)
 {
     if ((is_on_the_path(path, xx + 1, yy, l) || xx + 1 >= x) && (is_on_the_path(path, xx - 1, yy, l) || xx - 1 < 0) && (is_on_the_path(path, xx, yy + 1, l) || yy + 1 >= y) && (is_on_the_path(path, xx, yy - 1, l) || yy - 1 < 0))
@@ -1020,7 +1033,6 @@ bool gand(int **path, int xx, int yy, int l, int x, int y)
     }
     return 0;
 }
-
 
 string find_path()
 {
@@ -1038,7 +1050,6 @@ string find_path()
     }
     return q;
 }
-
 
 void map_output(int x, int y, int **table, int xx, int yy, int **path, int l)
 {
@@ -1182,7 +1193,6 @@ void map_output(int x, int y, int **table, int xx, int yy, int **path, int l)
     }
 }
 
-
 string map_save(int x, int y, int **table, int xx, int yy, int **path, int l)
 {
     string s;
@@ -1273,7 +1283,6 @@ string map_save(int x, int y, int **table, int xx, int yy, int **path, int l)
     }
     return s;
 }
-
 
 void create_map(string s)
 {
@@ -1543,7 +1552,6 @@ void create_map(string s)
     q = getch();
 }
 
-
 void clean()
 {
 #if defined _WIN32
@@ -1556,7 +1564,6 @@ void clean()
     system("clear");
 #endif
 }
-
 
 void read_file(string s, string ss)
 {
@@ -1662,7 +1669,7 @@ void read_file(string s, string ss)
                 path[i][j] = x;
             }
         }
-        if (!find(table, l, x, y, 0, 0, 0, path, table[0][0], 0))
+        if (!find_answer(table, l, x, y, 0, 0, 0, path, table[0][0], 0))
         {
             cout << "There is no any path";
             cout << "\nPress any key to continue";
@@ -1687,7 +1694,6 @@ void read_file(string s, string ss)
         playground(table, l, x, y, name);
     }
 }
-
 
 void playground(int **table, int l, int x, int y, string file_name)
 {
@@ -1809,7 +1815,6 @@ void playground(int **table, int l, int x, int y, string file_name)
     q = getch();
 }
 
-
 bool is_on_the_path(int **path, int xx, int yy, int l)
 {
 
@@ -1822,7 +1827,6 @@ bool is_on_the_path(int **path, int xx, int yy, int l)
     }
     return 0;
 }
-
 
 bool make_path(int **path, int xx, int yy, int l, int x, int y, int **table, int maxv, int minv, int maxb, int minb)
 {
@@ -2003,7 +2007,6 @@ inja:
     return 1;
 }
 
-
 bool gandz(int **path, int xx, int yy, int l, int x, int y, int uc, int rc, int dc, int lc)
 {
     if ((is_on_the_path(path, xx + 1, yy, l) || xx + 1 >= x || dc == 0) && (is_on_the_path(path, xx - 1, yy, l) || xx - 1 < 0 || uc == 0) && (is_on_the_path(path, xx, yy + 1, l) || yy + 1 >= y || rc == 0) && (is_on_the_path(path, xx, yy - 1, l) || yy - 1 < 0 || lc == 0))
@@ -2012,7 +2015,6 @@ bool gandz(int **path, int xx, int yy, int l, int x, int y, int uc, int rc, int 
     }
     return 0;
 }
-
 
 void menu(int n)
 {
@@ -2105,7 +2107,6 @@ void menu(int n)
     }
 }
 
-
 void select_file(string ss)
 {
     int index;
@@ -2174,7 +2175,6 @@ void select_file(string ss)
         read_file(f, "play");
     }
 }
-
 
 void output_list(int i)
 {
