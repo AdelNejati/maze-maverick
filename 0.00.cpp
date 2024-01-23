@@ -12,8 +12,7 @@
 #include <ctime>
 #include <sys/stat.h>
 #include <conio.h>
-using namespace std;
-namespace fs = filesystem;
+
 
 #define LTARROW 0x4B
 #define RTARROW 0x4D
@@ -32,6 +31,7 @@ namespace fs = filesystem;
 #define F9_Key 0x4300
 #define F10_Key 0x4400
 
+
 #define color_black 0
 #define color_dark_blue 1
 #define color_dark_green 2
@@ -49,10 +49,16 @@ namespace fs = filesystem;
 #define color_yellow 14
 #define color_white 15
 
+
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #define VC_EXTRALEAN
 #endif
+
+
+using namespace std;
+namespace fs = filesystem;
+
 
 string get_textcolor_code(const int textcolor)
 { // Linux only
@@ -94,6 +100,8 @@ string get_textcolor_code(const int textcolor)
         return "37";
     }
 }
+
+
 string get_backgroundcolor_code(const int backgroundcolor)
 { // Linux only
     switch (backgroundcolor)
@@ -134,14 +142,20 @@ string get_backgroundcolor_code(const int backgroundcolor)
         return "40";
     }
 }
+
+
 string get_print_color(const int textcolor)
 { // Linux only
     return "\033[" + get_textcolor_code(textcolor) + "m";
 }
+
+
 string get_print_color(const int textcolor, const int backgroundcolor)
 { // Linux only
     return "\033[" + get_textcolor_code(textcolor) + ";" + get_backgroundcolor_code(backgroundcolor) + "m";
 }
+
+
 void print_color(const int textcolor)
 {
 #if defined(_WIN32)
@@ -151,6 +165,8 @@ void print_color(const int textcolor)
     cout << get_print_color(textcolor);
 #endif // Windows/Linux
 }
+
+
 void print_color(const int textcolor, const int backgroundcolor)
 {
 #if defined(_WIN32)
@@ -160,6 +176,8 @@ void print_color(const int textcolor, const int backgroundcolor)
     cout << get_print_color(textcolor, backgroundcolor);
 #endif // Windows/Linux
 }
+
+
 void print_color_reset()
 {
 #if defined(_WIN32)
@@ -170,77 +188,48 @@ void print_color_reset()
 #endif // Windows/Linux
 }
 
+
 void println(const string &s = "")
 {
     cout << s << endl;
 }
+
+
 void print(const string &s = "")
 {
     cout << s;
 }
+
+
 void print(const string &s, const int textcolor)
 {
     print_color(textcolor);
     cout << s;
     print_color_reset();
 }
+
+
 void print(const string &s, const int textcolor, const int backgroundcolor)
 {
     print_color(textcolor, backgroundcolor);
     cout << s;
     print_color_reset();
 }
+
+
 void print_no_reset(const string &s, const int textcolor)
 { // print with color, but don't reset color afterwards (faster)
     print_color(textcolor);
     cout << s;
 }
+
+
 void print_no_reset(const string &s, const int textcolor, const int backgroundcolor)
 { // print with color, but don't reset color afterwards (faster)
     print_color(textcolor, backgroundcolor);
     cout << s;
 }
-// inja baraye declare
-void playground(int **table, int l, int x, int y, string file_name);
-bool make_path(int **path, int xx, int yy, int l, int x, int y, int **table, int maxv, int minv, int maxb, int minb);
-bool is_on_the_path(int **path, int xx, int yy, int l);
-void output_list(int i);
-bool gandz(int **path, int xx, int yy, int l, int x, int y, int uc, int rc, int dc, int lc);
-bool find(int **table, int l, int x, int y, int xx, int yy, int i, int **path, int sum, bool end);
-void save_data(string player_name, string time, string result, string file_name, string date);
-string find_path();
-void output_last_ten();
-void history_menu();
-void output_list_user(int i);
-void leaderboard();
-int input_number(string s);
-void users_list();
-bool give_path(int **&path, int l, int x, int y, int xx, int yy, int h);
-void output_amar(string s);
-bool gand(int **path, int xx, int yy, int l, int x, int y)
-{
-    if ((is_on_the_path(path, xx + 1, yy, l) || xx + 1 >= x) && (is_on_the_path(path, xx - 1, yy, l) || xx - 1 < 0) && (is_on_the_path(path, xx, yy + 1, l) || yy + 1 >= y) && (is_on_the_path(path, xx, yy - 1, l) || yy - 1 < 0))
-    {
-        return 1;
-    }
-    return 0;
-}
-// time_t parseDateTime(const char* datetimeString, const char* format)
-// {
-//     struct tm tmStruct;
-//     strftime(datetimeString, format, &tmStruct);
-//     return mktime(&tmStruct);
-// }
 
-// // Function to format a time_t value into a date or time string.
-// string DateTime(time_t time, const char* format)
-// {
-//     char buffer[90];
-//     struct tm* timeinfo = localtime(&time);
-//     strftime(buffer, sizeof(buffer), format, timeinfo);
-//     return buffer;
-// }
-// for getch
 
 #ifdef __MINGW32__
 const int UP_KEY = 72;
@@ -273,20 +262,765 @@ int getch(void)
 }
 #endif
 
-void clean()
+// inja baraye declare
+bool find(int **table, int l, int x, int y, int xx, int yy, int i, int **path, int sum, bool end);
+void history_menu_out(int x);
+void history_menu();
+void output_last_ten();
+void save_data(string player_name, string time, string result, string file_name, string date);
+void users_list();
+void output_list_user(int i);
+void output_amar(string s);
+void leaderboard();
+bool give_path(int **&path, int l, int x, int y, int xx, int yy, int h);
+int input_number(string s);
+bool gand(int **path, int xx, int yy, int l, int x, int y);
+string find_path();
+void map_output(int x, int y, int **table, int xx, int yy, int **path, int l);
+string map_save(int x, int y, int **table, int xx, int yy, int **path, int l);
+void create_map(string s);
+void clean();
+void read_file(string s, string ss);
+void playground(int **table, int l, int x, int y, string file_name);
+bool is_on_the_path(int **path, int xx, int yy, int l);
+bool make_path(int **path, int xx, int yy, int l, int x, int y, int **table, int maxv, int minv, int maxb, int minb);
+bool gandz(int **path, int xx, int yy, int l, int x, int y, int uc, int rc, int dc, int lc);
+void menu(int n);
+void select_file(string ss);
+void output_list(int i);
+
+
+struct info
 {
-#if defined _WIN32
-    system("cls");
-    // clrscr(); // including header file : conio.h
-#elif defined(__LINUX__) || defined(__gnu_linux__) || defined(__linux__)
-    system("clear");
-    // std::cout<< u8"\033[2J\033[1;1H"; //Using ANSI Escape Sequences
-#elif defined(__APPLE__)
-    system("clear");
-#endif
+    string name;
+    int wr;
+    double tt;
+};
+
+
+vector<pair<int, string>> users;
+vector<pair<int, string>> ps;
+vector<pair<int, string>> ul;
+
+
+int main()
+{
+    string ad;
+    cout << "Welcome to Maze Maverick\n";
+    char q;
+    int x = 1;
+    menu(1);
+    while (true)
+    {
+        q = getch();
+        clean();
+        if ((int)q == 72 && x - 1 > 0)
+        {
+            x--;
+        }
+        else if ((int)q == 80 && (x + 1) <= 9)
+        {
+            x++;
+        }
+        else if ((int)q == 13)
+        {
+            if (x == 1)
+            {
+                create_map("Easy");
+            }
+            if (x == 2)
+            {
+                create_map("Hard");
+            }
+            if (x == 3)
+            {
+                select_file("play");
+            }
+            if (x == 4)
+            {
+                cout << "Please enter your file address : ";
+                cin >> ad;
+                read_file(ad, "play");
+            }
+            if (x == 5)
+            {
+                select_file("find");
+                // cin>>x;
+            }
+            if (x == 6)
+            {
+                cout << "Please enter your file address : ";
+                cin >> ad;
+                read_file(ad, "find");
+            }
+            if (x == 7)
+            {
+                history_menu();
+            }
+            if (x == 8)
+            {
+                leaderboard();
+            }
+            if (x == 9)
+            {
+                exit(0);
+            }
+            x = 1;
+            clean();
+        }
+        else
+        {
+        }
+        menu(x);
+    }
+
+    return 0;
 }
-//...
-// output map
+
+
+bool find(int **table, int l, int x, int y, int xx, int yy, int i, int **path, int sum, bool end)
+{
+    char q;
+    if ((xx == x - 1 && yy == y - 1) || (i == l))
+    {
+        if ((float)sum / 2 == table[x - 1][y - 1] && i == l && (xx == x - 1 && yy == y - 1))
+        {
+            clean();
+            map_output(x, y, table, xx, yy, path, l);
+            cout << "\nPress (Backspace) to return";
+            cout << "\nPress any key to show other results if exist";
+            q = getch();
+            if (q == 8)
+            {
+                return 1;
+            }
+            return 0;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    if ((is_on_the_path(path, xx + 1, yy, l) || xx + 1 >= x || table[xx + 1][yy] == 0) && (is_on_the_path(path, xx - 1, yy, l) || xx - 1 < 0 || table[xx - 1][yy] == 0) && (is_on_the_path(path, xx, yy + 1, l) || yy + 1 >= y || table[xx][yy + 1] == 0) && (is_on_the_path(path, xx, yy - 1, l) || yy - 1 < 0 || table[xx][yy - 1] == 0))
+    {
+        return 0;
+    }
+
+    if (yy + 1 < y && !is_on_the_path(path, xx, yy + 1, l) && table[xx][yy + 1] != 0)
+    {
+        path[i][0] = xx;
+        path[i][1] = yy;
+        yy = yy + 1;
+
+        sum += table[xx][yy];
+        i++;
+        if (find(table, l, x, y, xx, yy, i, path, sum, 0))
+        {
+            return 1;
+        }
+
+        i--;
+        path[i][0] = x;
+        path[i][1] = y;
+        sum = sum - table[xx][yy];
+        yy = yy - 1;
+    }
+    if (xx - 1 >= 0 && !is_on_the_path(path, xx - 1, yy, l) && table[xx - 1][yy] != 0)
+    {
+        path[i][0] = xx;
+        path[i][1] = yy;
+        xx = xx - 1;
+        sum += table[xx][yy];
+        i++;
+        if (find(table, l, x, y, xx, yy, i, path, sum, 0))
+        {
+            return 1;
+        }
+        i--;
+        path[i][0] = x;
+        path[i][1] = y;
+        sum = sum - table[xx][yy];
+        xx = xx + 1;
+    }
+    if ((xx + 1) < x && !is_on_the_path(path, xx + 1, yy, l) && table[xx + 1][yy] != 0)
+    {
+        path[i][0] = xx;
+        path[i][1] = yy;
+        xx = xx + 1;
+        sum += table[xx][yy];
+        i++;
+        if (find(table, l, x, y, xx, yy, i, path, sum, 0))
+        {
+            return 1;
+        }
+        i--;
+        path[i][0] = x;
+        path[i][1] = y;
+        sum = sum - table[xx][yy];
+        xx = xx - 1;
+    }
+    if (yy - 1 >= 0 && !is_on_the_path(path, xx, yy - 1, l) && table[xx][yy - 1] != 0)
+    {
+
+        path[i][0] = xx;
+        path[i][1] = yy;
+        yy = yy - 1;
+
+        sum += table[xx][yy];
+        i++;
+        if (find(table, l, x, y, xx, yy, i, path, sum, 0))
+        {
+            return 1;
+        }
+        i--;
+        path[i][0] = x;
+        path[i][1] = y;
+        sum = sum - table[xx][yy];
+        yy = yy + 1;
+    }
+    return 0;
+}
+
+
+void history_menu_out(int x)
+{
+
+    if (x == 1)
+    {
+        print("Back to menu", color_green, color_black);
+        cout << "\n";
+    }
+    else
+    {
+        cout << "Back to menu\n";
+    }
+    if (x == 2)
+    {
+        print("History of players", color_green, color_black);
+        cout << "\n";
+    }
+    else
+    {
+        cout << "History of players\n";
+    }
+    if (x == 3)
+    {
+        print("Last 10 games", color_green, color_black);
+        cout << "\n";
+    }
+    else
+    {
+        cout << "Last 10 games\n";
+    }
+}
+
+
+void history_menu()
+{
+    clean();
+    char q;
+    int x = 1;
+    history_menu_out(x);
+    while (1)
+    {
+
+        q = getch();
+
+        if ((int)q == 72 && x - 1 > 0)
+        {
+            x--;
+        }
+        else if ((int)q == 80 && (x + 1) <= 3)
+        {
+            x++;
+        }
+        if (q == 13)
+        {
+            if (x == 1)
+            {
+                return;
+            }
+            else if (x == 2)
+            {
+                users_list();
+            }
+            else if (x == 3)
+            {
+                output_last_ten();
+            }
+        }
+        clean();
+        history_menu_out(x);
+    }
+}
+
+
+void output_last_ten()
+{
+    string s = find_path() + (char)92 + (char)92 + "Stats" + (char)92 + (char)92 + "history.txt";
+    // cout<<s;
+    ifstream A(s);
+    int i = 0;
+    string p;
+    clean();
+    cout << "Last 10 games : \n\n";
+    while (i < 20)
+    {
+        getline(A, p);
+        cout << p << "\n";
+
+        i++;
+    }
+    A.close();
+
+    cout << "\nPress any key to continue";
+    char q = getch();
+}
+
+
+void save_data(string player_name, string time, string result, string file_name, string date)
+{
+
+    auto start = std::chrono::system_clock::now();
+    // Some computation here
+    auto end = std::chrono::system_clock::now();
+
+    std::chrono::duration<double> elapsed_seconds = end - start;
+    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+
+    string gably, t;
+    ifstream B("Stats\\history.txt");
+    while (getline(B, t))
+    {
+
+        gably = gably + t + "\n";
+    }
+    B.close();
+    ofstream A("Stats\\history.txt");
+
+    A << player_name;
+    A << "    " << file_name;
+    A << "    " << result;
+    A << "    " << time[0] << time[1] << time[2] << time[3] << " s";
+    A << "    " << std::ctime(&end_time);
+    A << "\n"
+      << gably;
+    A.close();
+    string user_path = player_name;
+    user_path = "Users\\" + user_path + ".txt";
+    gably = "";
+    ifstream D(user_path);
+    while (getline(D, t))
+    {
+
+        gably = gably + t + "\n";
+    }
+    D.close();
+
+    ofstream C(user_path);
+    C << player_name;
+    C << "    " << file_name;
+    C << "    " << result;
+    C << "    " << time[0] << time[1] << time[2] << time[3] << " s";
+    C << "    " << std::ctime(&end_time);
+    C << "\n"
+      << gably;
+    C.close();
+}
+
+
+void users_list()
+{
+    clean();
+    int index;
+    string s;
+    string path = find_path() + (char)92 + (char)92 + "Users";
+    int i = 0;
+    while (i != ul.size())
+    {
+        ul.pop_back();
+    }
+
+    struct stat sb;
+    ul.push_back(make_pair(0, "Back to menu"));
+    int iii = 1;
+    for (const auto &entry : fs::directory_iterator(path))
+    {
+        iii++;
+        filesystem::path outfilename = entry.path();
+        string outfilename_str = outfilename.string();
+        const char *path = outfilename_str.c_str();
+        if (stat(path, &sb) == 0 && !(sb.st_mode & S_IFDIR))
+        {
+            index = outfilename_str.find("Users", 5);
+            s = outfilename_str.substr(index + 6);
+            ul.push_back(make_pair(iii, s));
+            // cout<<s;
+        }
+    }
+    i = 0;
+    output_list_user(0);
+    char q = 'm';
+    // cout<<"FGFHF";
+    // cin>>q;
+
+    while ((int)q != 13)
+    {
+        q = getch();
+        if ((int)q == 72 && i - 1 >= 0)
+        {
+            i--;
+        }
+        else if ((int)q == 80 && (i + 1) < iii)
+        {
+            i++;
+        }
+
+        clean();
+
+        output_list_user(i);
+    }
+    if (ul[i].second == "Back to menu")
+    {
+        return;
+    }
+
+    // cout<<"here";
+    string f = "";
+    // cin>>f;
+    f = "Users";
+    f = f + (char)92;
+    f = f + ul[i].second;
+    output_amar(f);
+    clean();
+}
+
+
+void output_list_user(int i)
+{
+    int ii = 0;
+    while (ii != ul.size())
+    {
+
+        if (i == ii)
+        {
+            print(ul[ii].second, color_green, color_black);
+            cout << "\n";
+        }
+        else
+        {
+            cout << ul[ii].second << "\n";
+        }
+        ii++;
+    }
+}
+
+
+void output_amar(string s)
+{
+    clean();
+    ifstream A(s);
+    string t;
+    int i = 0, j = 0;
+    while (getline(A, t))
+    {
+        i++;
+    }
+    A.close();
+    ifstream B(s);
+    double time, tt = 0, times;
+    int wc = 0;
+    string date;
+    bool flag = 1;
+    while (j != i / 2)
+    {
+        B >> t >> t >> t;
+        if (t == "WON")
+        {
+            wc++;
+        }
+        B >> time;
+
+        tt += time;
+        B >> t;
+
+        B >> t;
+        if (flag)
+        {
+            date = date + " " + t;
+        }
+        B >> t;
+        if (flag)
+        {
+            date = date + " " + t;
+        }
+        B >> t;
+        if (flag)
+        {
+            date = date + " " + t;
+        }
+        B >> t;
+        if (flag)
+        {
+            date = date + " " + t;
+        }
+
+        B >> t;
+        if (flag)
+        {
+            date = date + " " + t;
+            flag = 0;
+        }
+        j++;
+    }
+    B.close();
+
+    cout << "Total games : " << i / 2;
+
+    cout << "\nGames won : " << wc;
+    cout << "\nTotal time : " << tt;
+    cout << "\nLast date : " << date;
+    cout << "\nPress any key to continue";
+    char q = getch();
+}
+
+
+void leaderboard()
+{
+    clean();
+    string s;
+    string path = find_path() + (char)92 + (char)92 + "Users";
+    int i = 0;
+    while (i != users.size())
+    {
+        users.pop_back();
+    }
+
+    struct stat sb;
+    int iii = 1;
+    for (const auto &entry : fs::directory_iterator(path))
+    {
+        iii++;
+        filesystem::path outfilename = entry.path();
+        string outfilename_str = outfilename.string();
+        const char *path = outfilename_str.c_str();
+        if (stat(path, &sb) == 0 && !(sb.st_mode & S_IFDIR))
+        {
+            users.push_back(make_pair(iii, outfilename_str));
+        }
+    }
+    int oo = 0;
+    char q = 'm';
+    info all[users.size()];
+    while (oo != users.size())
+    {
+
+        ifstream A(users[oo].second);
+        string t;
+        int i = 0, j = 0;
+        while (getline(A, t))
+        {
+            i++;
+        }
+        A.close();
+        ifstream B(users[oo].second);
+        double time, tt = 0, times;
+        int wc = 0;
+        while (j != i / 2)
+        {
+            B >> t;
+            all[oo].name = t;
+            B >> t >> t;
+            if (t == "WON")
+            {
+                wc++;
+            }
+            all[oo].wr = wc;
+            B >> time;
+            tt += time;
+            B >> t >> t >> t;
+            B >> t >> t >> t;
+            j++;
+        }
+        all[oo].tt = tt;
+        B.close();
+        oo++;
+    }
+    oo = 0;
+    int fs = 0, ss = 0, ts = 0;
+    //     while (oo != users.size())
+    //     {
+    // cout<<all[oo].name<<"     Win rate : "<<all[oo].wr<<"     Total time : "<<all[oo].tt<<"\n";
+    //         oo++;
+    //     }
+    oo = 0;
+    while (oo != users.size())
+    {
+        if ((all[oo].wr > all[fs].wr || (all[oo].wr == all[fs].wr && all[oo].tt < all[fs].tt)) && oo != fs && oo != ss)
+        {
+            fs = oo;
+        }
+        // cout<<fs;
+        oo++;
+    }
+    oo = 0;
+    while (oo != users.size())
+    {
+        if ((all[oo].wr > all[ss].wr || (all[oo].wr == all[ss].wr && all[oo].tt < all[ss].tt)) && oo != fs && oo != ss)
+        {
+            ss = oo;
+        }
+        // cout<<ss;
+        oo++;
+    }
+    oo = 0;
+    while (oo != users.size())
+    {
+        if ((all[oo].wr > all[ts].wr || (all[oo].wr == all[ts].wr && all[oo].tt < all[ts].tt)) && oo != fs && oo != ss)
+        {
+            ts = oo;
+        }
+        // cout<<ts;
+        oo++;
+    }
+    cout << all[fs].name << "     Win rate : " << all[fs].wr << "     Total time : " << all[fs].tt << "\n\n";
+    if (users.size() > 1)
+    {
+
+        cout << all[ss].name << "     Win rate : " << all[ss].wr << "     Total time : " << all[ss].tt << "\n\n";
+    }
+    if (users.size() > 2)
+    {
+        cout << all[ts].name << "     Win rate : " << all[ts].wr << "     Total time : " << all[ts].tt << "\n\n";
+    }
+    cout << "\nPress any key to continue";
+    q = getch();
+
+    clean();
+}
+
+
+bool give_path(int **&path, int l, int x, int y, int xx, int yy, int h)
+{
+
+    // int najafi = rand() % 4;
+
+    // cout<<"\n"<<xx<<" "<<yy<<" "<<h<<"\n";
+    // r = 0;
+    if (h == l)
+    {
+        if (xx == x - 1 && yy == y - 1)
+        {
+            // cout<<"inja??";
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    if (xx - 1 >= 0 && !is_on_the_path(path, xx - 1, yy, l))
+    {
+        xx = xx - 1;
+        path[h][0] = xx;
+        path[h][1] = yy;
+        h++;
+        if (give_path(path, l, x, y, xx, yy, h))
+        {
+            return 1;
+        }
+        // cout<<h<<" ";
+        h--;
+        path[h][0] = x;
+        path[h][1] = y;
+        xx++;
+    }
+    if (yy + 1 < y && !is_on_the_path(path, xx, yy + 1, l))
+    {
+
+        yy = yy + 1;
+        path[h][0] = xx;
+        path[h][1] = yy;
+        h++;
+        if (give_path(path, l, x, y, xx, yy, h))
+        {
+            return 1;
+        }
+        // cout<<h<<" ";
+        h--;
+        path[h][0] = x;
+        path[h][1] = y;
+        yy--;
+    }
+    if (xx + 1 < x && !is_on_the_path(path, xx + 1, yy, l))
+    {
+        xx = xx + 1;
+        path[h][0] = xx;
+        path[h][1] = yy;
+        h++;
+        if (give_path(path, l, x, y, xx, yy, h))
+        {
+            return 1;
+        }
+        // cout<<h<<" ";
+        h--;
+        path[h][0] = x;
+        path[h][1] = y;
+        xx--;
+    }
+    if (yy - 1 >= 0 && !is_on_the_path(path, xx, yy - 1, l))
+    {
+        yy = yy - 1;
+        path[h][0] = xx;
+        path[h][1] = yy;
+        h++;
+        if (give_path(path, l, x, y, xx, yy, h))
+        {
+            return 1;
+        }
+        // cout<<h<<" ";
+        h--;
+        path[h][0] = x;
+        path[h][1] = y;
+        yy++;
+    }
+    // cout<<"kifkd";
+    return 0;
+}
+
+
+int input_number(string s)
+{
+    int i = s.size() - 1, n = 1, num = 0;
+    while (i != -1)
+    {
+        if (isdigit(s[i]))
+        {
+            num = num + (s[i] - '0') * n;
+            // cout << num << "\n";
+
+            n = n * 10;
+        }
+        else
+        {
+            return -1;
+        }
+
+        i--;
+    }
+    return num;
+}
+
+
+bool gand(int **path, int xx, int yy, int l, int x, int y)
+{
+    if ((is_on_the_path(path, xx + 1, yy, l) || xx + 1 >= x) && (is_on_the_path(path, xx - 1, yy, l) || xx - 1 < 0) && (is_on_the_path(path, xx, yy + 1, l) || yy + 1 >= y) && (is_on_the_path(path, xx, yy - 1, l) || yy - 1 < 0))
+    {
+        return 1;
+    }
+    return 0;
+}
+
 
 string find_path()
 {
@@ -304,6 +1038,8 @@ string find_path()
     }
     return q;
 }
+
+
 void map_output(int x, int y, int **table, int xx, int yy, int **path, int l)
 {
     int max_l = to_string(table[0][0]).size();
@@ -439,13 +1175,13 @@ void map_output(int x, int y, int **table, int xx, int yy, int **path, int l)
                 }
                 else
                 {
-
                     cout << char(205);
                 }
             }
         }
     }
 }
+
 
 string map_save(int x, int y, int **table, int xx, int yy, int **path, int l)
 {
@@ -537,6 +1273,7 @@ string map_save(int x, int y, int **table, int xx, int yy, int **path, int l)
     }
     return s;
 }
+
 
 void create_map(string s)
 {
@@ -806,6 +1543,21 @@ void create_map(string s)
     q = getch();
 }
 
+
+void clean()
+{
+#if defined _WIN32
+    system("cls");
+    // clrscr(); // including header file : conio.h
+#elif defined(__LINUX__) || defined(__gnu_linux__) || defined(__linux__)
+    system("clear");
+    // std::cout<< u8"\033[2J\033[1;1H"; //Using ANSI Escape Sequences
+#elif defined(__APPLE__)
+    system("clear");
+#endif
+}
+
+
 void read_file(string s, string ss)
 {
 
@@ -935,6 +1687,8 @@ void read_file(string s, string ss)
         playground(table, l, x, y, name);
     }
 }
+
+
 void playground(int **table, int l, int x, int y, string file_name)
 {
     char q;
@@ -1055,6 +1809,7 @@ void playground(int **table, int l, int x, int y, string file_name)
     q = getch();
 }
 
+
 bool is_on_the_path(int **path, int xx, int yy, int l)
 {
 
@@ -1067,6 +1822,7 @@ bool is_on_the_path(int **path, int xx, int yy, int l)
     }
     return 0;
 }
+
 
 bool make_path(int **path, int xx, int yy, int l, int x, int y, int **table, int maxv, int minv, int maxb, int minb)
 {
@@ -1092,14 +1848,6 @@ bool make_path(int **path, int xx, int yy, int l, int x, int y, int **table, int
         path[i][0] = x;
         path[i][1] = y;
     }
-
-// give_path(path, l, x, y, 0, 0, 0);
-
-// for (size_t i = 0; i < l; i++)
-// {
-//     cout << path[i][0] << " ";
-//     cout << path[i][1] << "\n";
-// }
 inja:
     xx = 0;
     yy = 0;
@@ -1254,6 +2002,8 @@ inja:
 
     return 1;
 }
+
+
 bool gandz(int **path, int xx, int yy, int l, int x, int y, int uc, int rc, int dc, int lc)
 {
     if ((is_on_the_path(path, xx + 1, yy, l) || xx + 1 >= x || dc == 0) && (is_on_the_path(path, xx - 1, yy, l) || xx - 1 < 0 || uc == 0) && (is_on_the_path(path, xx, yy + 1, l) || yy + 1 >= y || rc == 0) && (is_on_the_path(path, xx, yy - 1, l) || yy - 1 < 0 || lc == 0))
@@ -1262,6 +2012,7 @@ bool gandz(int **path, int xx, int yy, int l, int x, int y, int uc, int rc, int 
     }
     return 0;
 }
+
 
 void menu(int n)
 {
@@ -1353,7 +2104,8 @@ void menu(int n)
         print("Exit\n", color_white, color_black);
     }
 }
-vector<pair<int, string>> ps;
+
+
 void select_file(string ss)
 {
     int index;
@@ -1423,6 +2175,7 @@ void select_file(string ss)
     }
 }
 
+
 void output_list(int i)
 {
     int ii = 0;
@@ -1440,707 +2193,4 @@ void output_list(int i)
         }
         ii++;
     }
-}
-int main()
-{
-    string ad;
-    cout << "Welcome to Maze Maverick\n";
-    char q;
-    int x = 1;
-    menu(1);
-    while (true)
-    {
-        q = getch();
-        clean();
-        if ((int)q == 72 && x - 1 > 0)
-        {
-            x--;
-        }
-        else if ((int)q == 80 && (x + 1) <= 9)
-        {
-            x++;
-        }
-        else if ((int)q == 13)
-        {
-            if (x == 1)
-            {
-                create_map("Easy");
-            }
-            if (x == 2)
-            {
-                create_map("Hard");
-            }
-            if (x == 3)
-            {
-                select_file("play");
-            }
-            if (x == 4)
-            {
-                cout << "Please enter your file address : ";
-                cin >> ad;
-                read_file(ad, "play");
-            }
-            if (x == 5)
-            {
-                select_file("find");
-                // cin>>x;
-            }
-            if (x == 6)
-            {
-                cout << "Please enter your file address : ";
-                cin >> ad;
-                read_file(ad, "find");
-            }
-            if (x == 7)
-            {
-                history_menu();
-            }
-            if (x == 8)
-            {
-                leaderboard();
-            }
-            if (x == 9)
-            {
-                exit(0);
-            }
-            x = 1;
-            clean();
-        }
-        else
-        {
-        }
-        menu(x);
-    }
-
-    return 0;
-}
-
-bool find(int **table, int l, int x, int y, int xx, int yy, int i, int **path, int sum, bool end)
-{
-    char q;
-    if ((xx == x - 1 && yy == y - 1) || (i == l))
-    {
-        if ((float)sum / 2 == table[x - 1][y - 1] && i == l && (xx == x - 1 && yy == y - 1))
-        {
-            clean();
-            map_output(x, y, table, xx, yy, path, l);
-            cout << "\nPress (Backspace) to return";
-            cout << "\nPress any key to show other results if exist";
-            q = getch();
-            if (q == 8)
-            {
-                return 1;
-            }
-            return 0;
-        }
-        else
-        {
-            return 0;
-        }
-    }
-    if ((is_on_the_path(path, xx + 1, yy, l) || xx + 1 >= x || table[xx + 1][yy] == 0) && (is_on_the_path(path, xx - 1, yy, l) || xx - 1 < 0 || table[xx - 1][yy] == 0) && (is_on_the_path(path, xx, yy + 1, l) || yy + 1 >= y || table[xx][yy + 1] == 0) && (is_on_the_path(path, xx, yy - 1, l) || yy - 1 < 0 || table[xx][yy - 1] == 0))
-    {
-        return 0;
-    }
-
-    if (yy + 1 < y && !is_on_the_path(path, xx, yy + 1, l) && table[xx][yy + 1] != 0)
-    {
-        path[i][0] = xx;
-        path[i][1] = yy;
-        yy = yy + 1;
-
-        sum += table[xx][yy];
-        i++;
-        if (find(table, l, x, y, xx, yy, i, path, sum, 0))
-        {
-            return 1;
-        }
-
-        i--;
-        path[i][0] = x;
-        path[i][1] = y;
-        sum = sum - table[xx][yy];
-        yy = yy - 1;
-    }
-    if (xx - 1 >= 0 && !is_on_the_path(path, xx - 1, yy, l) && table[xx - 1][yy] != 0)
-    {
-        path[i][0] = xx;
-        path[i][1] = yy;
-        xx = xx - 1;
-        sum += table[xx][yy];
-        i++;
-        if (find(table, l, x, y, xx, yy, i, path, sum, 0))
-        {
-            return 1;
-        }
-        i--;
-        path[i][0] = x;
-        path[i][1] = y;
-        sum = sum - table[xx][yy];
-        xx = xx + 1;
-    }
-    if ((xx + 1) < x && !is_on_the_path(path, xx + 1, yy, l) && table[xx + 1][yy] != 0)
-    {
-        path[i][0] = xx;
-        path[i][1] = yy;
-        xx = xx + 1;
-        sum += table[xx][yy];
-        i++;
-        if (find(table, l, x, y, xx, yy, i, path, sum, 0))
-        {
-            return 1;
-        }
-        i--;
-        path[i][0] = x;
-        path[i][1] = y;
-        sum = sum - table[xx][yy];
-        xx = xx - 1;
-    }
-    if (yy - 1 >= 0 && !is_on_the_path(path, xx, yy - 1, l) && table[xx][yy - 1] != 0)
-    {
-
-        path[i][0] = xx;
-        path[i][1] = yy;
-        yy = yy - 1;
-
-        sum += table[xx][yy];
-        i++;
-        if (find(table, l, x, y, xx, yy, i, path, sum, 0))
-        {
-            return 1;
-        }
-        i--;
-        path[i][0] = x;
-        path[i][1] = y;
-        sum = sum - table[xx][yy];
-        yy = yy + 1;
-    }
-    return 0;
-}
-
-void history_menu_out(int x)
-{
-
-    if (x == 1)
-    {
-        print("Back to menu", color_green, color_black);
-        cout << "\n";
-    }
-    else
-    {
-        cout << "Back to menu\n";
-    }
-    if (x == 2)
-    {
-        print("History of players", color_green, color_black);
-        cout << "\n";
-    }
-    else
-    {
-        cout << "History of players\n";
-    }
-    if (x == 3)
-    {
-        print("Last 10 games", color_green, color_black);
-        cout << "\n";
-    }
-    else
-    {
-        cout << "Last 10 games\n";
-    }
-}
-
-void history_menu()
-{
-    clean();
-    char q;
-    int x = 1;
-    history_menu_out(x);
-    while (1)
-    {
-
-        q = getch();
-
-        if ((int)q == 72 && x - 1 > 0)
-        {
-            x--;
-        }
-        else if ((int)q == 80 && (x + 1) <= 3)
-        {
-            x++;
-        }
-        if (q == 13)
-        {
-            if (x == 1)
-            {
-                return;
-            }
-            else if (x == 2)
-            {
-                users_list();
-            }
-            else if (x == 3)
-            {
-                output_last_ten();
-            }
-        }
-        clean();
-        history_menu_out(x);
-    }
-}
-
-void output_last_ten()
-{
-    string s = find_path() + (char)92 + (char)92 + "Stats" + (char)92 + (char)92 + "history.txt";
-    // cout<<s;
-    ifstream A(s);
-    int i = 0;
-    string p;
-    clean();
-    cout << "Last 10 games : \n\n";
-    while (i < 20)
-    {
-        getline(A, p);
-        cout << p << "\n";
-
-        i++;
-    }
-    A.close();
-
-    cout << "\nPress any key to continue";
-    char q = getch();
-}
-
-void save_data(string player_name, string time, string result, string file_name, string date)
-{
-
-    auto start = std::chrono::system_clock::now();
-    // Some computation here
-    auto end = std::chrono::system_clock::now();
-
-    std::chrono::duration<double> elapsed_seconds = end - start;
-    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
-
-    string gably, t;
-    ifstream B("Stats\\history.txt");
-    while (getline(B, t))
-    {
-
-        gably = gably + t + "\n";
-    }
-    B.close();
-    ofstream A("Stats\\history.txt");
-
-    A << player_name;
-    A << "    " << file_name;
-    A << "    " << result;
-    A << "    " << time[0] << time[1] << time[2] << time[3] << " s";
-    A << "    " << std::ctime(&end_time);
-    A << "\n"
-      << gably;
-    A.close();
-    string user_path = player_name;
-    user_path = "Users\\" + user_path + ".txt";
-    gably = "";
-    ifstream D(user_path);
-    while (getline(D, t))
-    {
-
-        gably = gably + t + "\n";
-    }
-    D.close();
-
-    ofstream C(user_path);
-    C << player_name;
-    C << "    " << file_name;
-    C << "    " << result;
-    C << "    " << time[0] << time[1] << time[2] << time[3] << " s";
-    C << "    " << std::ctime(&end_time);
-    C << "\n"
-      << gably;
-    C.close();
-}
-
-vector<pair<int, string>> ul;
-void users_list()
-{
-    clean();
-    int index;
-    string s;
-    string path = find_path() + (char)92 + (char)92 + "Users";
-    int i = 0;
-    while (i != ul.size())
-    {
-        ul.pop_back();
-    }
-
-    struct stat sb;
-    ul.push_back(make_pair(0, "Back to menu"));
-    int iii = 1;
-    for (const auto &entry : fs::directory_iterator(path))
-    {
-        iii++;
-        filesystem::path outfilename = entry.path();
-        string outfilename_str = outfilename.string();
-        const char *path = outfilename_str.c_str();
-        if (stat(path, &sb) == 0 && !(sb.st_mode & S_IFDIR))
-        {
-            index = outfilename_str.find("Users", 5);
-            s = outfilename_str.substr(index + 6);
-            ul.push_back(make_pair(iii, s));
-            // cout<<s;
-        }
-    }
-    i = 0;
-    output_list_user(0);
-    char q = 'm';
-    // cout<<"FGFHF";
-    // cin>>q;
-
-    while ((int)q != 13)
-    {
-        q = getch();
-        if ((int)q == 72 && i - 1 >= 0)
-        {
-            i--;
-        }
-        else if ((int)q == 80 && (i + 1) < iii)
-        {
-            i++;
-        }
-
-        clean();
-
-        output_list_user(i);
-    }
-    if (ul[i].second == "Back to menu")
-    {
-        return;
-    }
-
-    // cout<<"here";
-    string f = "";
-    // cin>>f;
-    f = "Users";
-    f = f + (char)92;
-    f = f + ul[i].second;
-    output_amar(f);
-    clean();
-}
-void output_list_user(int i)
-{
-    int ii = 0;
-    while (ii != ul.size())
-    {
-
-        if (i == ii)
-        {
-            print(ul[ii].second, color_green, color_black);
-            cout << "\n";
-        }
-        else
-        {
-            cout << ul[ii].second << "\n";
-        }
-        ii++;
-    }
-}
-void output_amar(string s)
-{
-    clean();
-    ifstream A(s);
-    string t;
-    int i = 0, j = 0;
-    while (getline(A, t))
-    {
-        i++;
-    }
-    A.close();
-    ifstream B(s);
-    double time, tt = 0, times;
-    int wc = 0;
-    string date;
-    bool flag = 1;
-    while (j != i / 2)
-    {
-        B >> t >> t >> t;
-        if (t == "WON")
-        {
-            wc++;
-        }
-        B >> time;
-
-        tt += time;
-        B >> t;
-
-        B >> t;
-        if (flag)
-        {
-            date = date + " " + t;
-        }
-        B >> t;
-        if (flag)
-        {
-            date = date + " " + t;
-        }
-        B >> t;
-        if (flag)
-        {
-            date = date + " " + t;
-        }
-        B >> t;
-        if (flag)
-        {
-            date = date + " " + t;
-        }
-
-        B >> t;
-        if (flag)
-        {
-            date = date + " " + t;
-            flag = 0;
-        }
-        j++;
-    }
-    B.close();
-
-    cout << "Total games : " << i / 2;
-
-    cout << "\nGames won : " << wc;
-    cout << "\nTotal time : " << tt;
-    cout << "\nLast date : " << date;
-    cout << "\nPress any key to continue";
-    char q = getch();
-}
-
-struct info
-{
-    string name;
-    int wr;
-    double tt;
-};
-
-vector<pair<int, string>> users;
-void leaderboard()
-{
-    clean();
-    string s;
-    string path = find_path() + (char)92 + (char)92 + "Users";
-    int i = 0;
-    while (i != users.size())
-    {
-        users.pop_back();
-    }
-
-    struct stat sb;
-    int iii = 1;
-    for (const auto &entry : fs::directory_iterator(path))
-    {
-        iii++;
-        filesystem::path outfilename = entry.path();
-        string outfilename_str = outfilename.string();
-        const char *path = outfilename_str.c_str();
-        if (stat(path, &sb) == 0 && !(sb.st_mode & S_IFDIR))
-        {
-            users.push_back(make_pair(iii, outfilename_str));
-        }
-    }
-    int oo = 0;
-    char q = 'm';
-    info all[users.size()];
-    while (oo != users.size())
-    {
-
-        ifstream A(users[oo].second);
-        string t;
-        int i = 0, j = 0;
-        while (getline(A, t))
-        {
-            i++;
-        }
-        A.close();
-        ifstream B(users[oo].second);
-        double time, tt = 0, times;
-        int wc = 0;
-        while (j != i / 2)
-        {
-            B >> t;
-            all[oo].name = t;
-            B >> t >> t;
-            if (t == "WON")
-            {
-                wc++;
-            }
-            all[oo].wr = wc;
-            B >> time;
-            tt += time;
-            B >> t >> t >> t;
-            B >> t >> t >> t;
-            j++;
-        }
-        all[oo].tt = tt;
-        B.close();
-        oo++;
-    }
-    oo = 0;
-    int fs = 0, ss = 0, ts = 0;
-    //     while (oo != users.size())
-    //     {
-    // cout<<all[oo].name<<"     Win rate : "<<all[oo].wr<<"     Total time : "<<all[oo].tt<<"\n";
-    //         oo++;
-    //     }
-    oo = 0;
-    while (oo != users.size())
-    {
-        if ((all[oo].wr > all[fs].wr || (all[oo].wr == all[fs].wr && all[oo].tt < all[fs].tt)) && oo != fs && oo != ss)
-        {
-            fs = oo;
-        }
-        // cout<<fs;
-        oo++;
-    }
-    oo = 0;
-    while (oo != users.size())
-    {
-        if ((all[oo].wr > all[ss].wr || (all[oo].wr == all[ss].wr && all[oo].tt < all[ss].tt)) && oo != fs && oo != ss)
-        {
-            ss = oo;
-        }
-        // cout<<ss;
-        oo++;
-    }
-    oo = 0;
-    while (oo != users.size())
-    {
-        if ((all[oo].wr > all[ts].wr || (all[oo].wr == all[ts].wr && all[oo].tt < all[ts].tt)) && oo != fs && oo != ss)
-        {
-            ts = oo;
-        }
-        // cout<<ts;
-        oo++;
-    }
-    cout << all[fs].name << "     Win rate : " << all[fs].wr << "     Total time : " << all[fs].tt << "\n\n";
-    if (users.size() > 1)
-    {
-
-        cout << all[ss].name << "     Win rate : " << all[ss].wr << "     Total time : " << all[ss].tt << "\n\n";
-    }
-    if (users.size() > 2)
-    {
-        cout << all[ts].name << "     Win rate : " << all[ts].wr << "     Total time : " << all[ts].tt << "\n\n";
-    }
-    cout << "\nPress any key to continue";
-    q = getch();
-
-    clean();
-}
-
-bool give_path(int **&path, int l, int x, int y, int xx, int yy, int h)
-{
-
-    // int najafi = rand() % 4;
-
-    // cout<<"\n"<<xx<<" "<<yy<<" "<<h<<"\n";
-    // r = 0;
-    if (h == l)
-    {
-        if (xx == x - 1 && yy == y - 1)
-        {
-            // cout<<"inja??";
-            return 1;
-        }
-        else
-        {
-            return 0;
-        }
-    }
-    if (xx - 1 >= 0 && !is_on_the_path(path, xx - 1, yy, l))
-    {
-        xx = xx - 1;
-        path[h][0] = xx;
-        path[h][1] = yy;
-        h++;
-        if (give_path(path, l, x, y, xx, yy, h))
-        {
-            return 1;
-        }
-        // cout<<h<<" ";
-        h--;
-        path[h][0] = x;
-        path[h][1] = y;
-        xx++;
-    }
-    if (yy + 1 < y && !is_on_the_path(path, xx, yy + 1, l))
-    {
-
-        yy = yy + 1;
-        path[h][0] = xx;
-        path[h][1] = yy;
-        h++;
-        if (give_path(path, l, x, y, xx, yy, h))
-        {
-            return 1;
-        }
-        // cout<<h<<" ";
-        h--;
-        path[h][0] = x;
-        path[h][1] = y;
-        yy--;
-    }
-    if (xx + 1 < x && !is_on_the_path(path, xx + 1, yy, l))
-    {
-        xx = xx + 1;
-        path[h][0] = xx;
-        path[h][1] = yy;
-        h++;
-        if (give_path(path, l, x, y, xx, yy, h))
-        {
-            return 1;
-        }
-        // cout<<h<<" ";
-        h--;
-        path[h][0] = x;
-        path[h][1] = y;
-        xx--;
-    }
-    if (yy - 1 >= 0 && !is_on_the_path(path, xx, yy - 1, l))
-    {
-        yy = yy - 1;
-        path[h][0] = xx;
-        path[h][1] = yy;
-        h++;
-        if (give_path(path, l, x, y, xx, yy, h))
-        {
-            return 1;
-        }
-        // cout<<h<<" ";
-        h--;
-        path[h][0] = x;
-        path[h][1] = y;
-        yy++;
-    }
-    // cout<<"kifkd";
-    return 0;
-}
-
-int input_number(string s)
-{
-    int i = s.size() - 1, n = 1, num = 0;
-    while (i != -1)
-    {
-        if (isdigit(s[i]))
-        {
-            num = num + (s[i] - '0') * n;
-            // cout << num << "\n";
-
-            n = n * 10;
-        }
-        else
-        {
-            return -1;
-        }
-
-        i--;
-    }
-    return num;
 }
