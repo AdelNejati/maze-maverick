@@ -214,6 +214,7 @@ void history_menu();
 void output_list_user(int i);
 void leaderboard();
 void users_list();
+bool give_path(int **&path, int l, int x, int y, int xx, int yy, int h);
 void output_amar(string s);
 bool gand(int **path, int xx, int yy, int l, int x, int y)
 {
@@ -726,8 +727,9 @@ void read_file(string s, string ss)
                 path[i][j] = x;
             }
         }
-        if(!find(table, l, x, y, 0, 0, 0, path, table[0][0], 0)){
-            cout<< "There is no any path";
+        if (!find(table, l, x, y, 0, 0, 0, path, table[0][0], 0))
+        {
+            cout << "There is no any path";
             cout << "\nPress any key to continue";
             q = getch();
         }
@@ -902,83 +904,96 @@ bool make_path(int **path, int xx, int yy, int l, int x, int y, int **table, int
     table[0][0] = r;
     sum += r;
 
-inja:
-    xx = 0;
-    yy = 0;
-
-    int lc = 0, rc = y - 1, uc = 0, dc = x - 1;
-    int ezafe = (l - (x + y - 2)) / 2;
-    for (int i = 0; i < ezafe; i++)
-    {
-        int najafi = rand() % 2;
-        if (najafi % 2 == 0)
-        {
-            dc++;
-            uc++;
-        }
-        if (najafi % 2 == 1)
-        {
-            lc++;
-            rc++;
-        }
-    }
-
     for (size_t i = 0; i < l; i++)
     {
-        path[i][0] = 0;
-        path[i][1] = 0;
+        path[i][0] = x;
+        path[i][1] = y;
     }
-    int h = 0;
 
-    while (true)
-    {
-        int najafi = rand() % 4;
-        r = 0;
-        if (najafi == 0 && uc > 0 && xx - 1 >= 0 && !is_on_the_path(path, xx - 1, yy, l))
-        {
-            xx = xx - 1;
-            path[h][0] = xx;
-            path[h][1] = yy;
+    // /give_path(path, l, x, y, 0, 0, 0);
 
-            uc--;
-            h++;
-        }
-        else if (najafi == 1 && rc > 0 && yy + 1 < y && !is_on_the_path(path, xx, yy + 1, l))
-        {
+    // for (size_t i = 0; i < l; i++)
+    // {
+    //     cout << path[i][0] << " ";
+    //     cout << path[i][1] << "\n";
+    // }
+    inja:
+        xx = 0;
+        yy = 0;
 
-            yy = yy + 1;
-            path[h][0] = xx;
-            path[h][1] = yy;
+        int lc = 0, rc = y - 1, uc = 0, dc = x - 1;
+        int ezafe = (l - (x + y - 2)) / 2;
+        for (int i = 0; i < ezafe; i++)
+        {
+            int najafi = rand() % 2;
+            if (najafi % 2 == 0)
+            {
+                dc++;
+                uc++;
+            }
+            if (najafi % 2 == 1)
+            {
+                lc++;
+                rc++;
+            }
+        }
 
-            rc--;
-            h++;
-        }
-        else if (najafi == 2 && dc > 0 && xx + 1 < x && !is_on_the_path(path, xx + 1, yy, l))
+        for (size_t i = 0; i < l; i++)
         {
-            xx = xx + 1;
-            path[h][0] = xx;
-            path[h][1] = yy;
+            path[i][0] = 0;
+            path[i][1] = 0;
+        }
+        int h = 0;
 
-            dc--;
-            h++;
-        }
-        else if (najafi == 3 && lc > 0 && yy - 1 >= 0 && !is_on_the_path(path, xx, yy - 1, l))
+        while (true)
         {
-            yy = yy - 1;
-            path[h][0] = xx;
-            path[h][1] = yy;
-            lc--;
-            h++;
+            int najafi = rand() % 4;
+            r = 0;
+            if (najafi == 0 && uc > 0 && xx - 1 >= 0 && !is_on_the_path(path, xx - 1, yy, l))
+            {
+                xx = xx - 1;
+                path[h][0] = xx;
+                path[h][1] = yy;
+
+                uc--;
+                h++;
+            }
+            else if (najafi == 1 && rc > 0 && yy + 1 < y && !is_on_the_path(path, xx, yy + 1, l))
+            {
+
+                yy = yy + 1;
+                path[h][0] = xx;
+                path[h][1] = yy;
+
+                rc--;
+                h++;
+            }
+            else if (najafi == 2 && dc > 0 && xx + 1 < x && !is_on_the_path(path, xx + 1, yy, l))
+            {
+                xx = xx + 1;
+                path[h][0] = xx;
+                path[h][1] = yy;
+
+                dc--;
+                h++;
+            }
+            else if (najafi == 3 && lc > 0 && yy - 1 >= 0 && !is_on_the_path(path, xx, yy - 1, l))
+            {
+                yy = yy - 1;
+                path[h][0] = xx;
+                path[h][1] = yy;
+                lc--;
+                h++;
+            }
+            if (h == l)
+            {
+                break;
+            }
+            if (gandz(path, xx, yy, l, x, y, uc, rc, dc, lc))
+            {
+                goto inja;
+            }
         }
-        if (h == l)
-        {
-            break;
-        }
-        if (gandz(path, xx, yy, l, x, y, uc, rc, dc, lc))
-        {
-            goto inja;
-        }
-    }
 
     for (size_t i = 0; i < l - 1; i++)
     {
@@ -1023,8 +1038,8 @@ inja:
         }
     }
 
-    r = 0;
-    while (r == 0)
+    r = -1;
+    while (r == -1)
     {
         if (minb != maxb)
         {
@@ -1037,7 +1052,7 @@ inja:
 
         if (r + l + 1 > x * y)
         {
-            r = 0;
+            r = -1;
         }
     }
     int nb = r, e;
@@ -1821,4 +1836,91 @@ void leaderboard()
     cin >> oo;
 
     clean();
+}
+
+bool give_path(int **&path, int l, int x, int y, int xx, int yy, int h)
+{
+
+    // int najafi = rand() % 4;
+
+    // cout<<"\n"<<xx<<" "<<yy<<" "<<h<<"\n";
+    // r = 0;
+    if (h == l)
+    {
+        if( xx == x - 1 && yy == y - 1){
+        // cout<<"inja??";
+        return 1;
+        }
+        else{
+            return 0;
+
+        }
+    }
+    if (xx - 1 >= 0 && !is_on_the_path(path, xx - 1, yy, l))
+    {
+        xx = xx - 1;
+        path[h][0] = xx;
+        path[h][1] = yy;
+        h++;
+        if (give_path(path, l, x, y, xx, yy, h))
+        {
+            return 1;
+        }
+        // cout<<h<<" ";
+        h--;
+        path[h][0] = x;
+        path[h][1] = y;
+        xx++;
+    }
+    if (yy + 1 < y && !is_on_the_path(path, xx, yy + 1, l))
+    {
+
+        yy = yy + 1;
+        path[h][0] = xx;
+        path[h][1] = yy;
+        h++;
+        if (give_path(path, l, x, y, xx, yy, h))
+        {
+            return 1;
+        }
+                // cout<<h<<" ";
+        h--;
+        path[h][0] = x;
+        path[h][1] = y;
+        yy--;
+    }
+    if (xx + 1 < x && !is_on_the_path(path, xx + 1, yy, l))
+    {
+        xx = xx + 1;
+        path[h][0] = xx;
+        path[h][1] = yy;
+        h++;
+        if (give_path(path, l, x, y, xx, yy, h))
+        {
+            return 1;
+        }
+                // cout<<h<<" ";
+        h--;
+        path[h][0] = x;
+        path[h][1] = y;
+        xx--;
+    }
+    if (yy - 1 >= 0 && !is_on_the_path(path, xx, yy - 1, l))
+    {
+        yy = yy - 1;
+        path[h][0] = xx;
+        path[h][1] = yy;
+        h++;
+        if (give_path(path, l, x, y, xx, yy, h))
+        {
+            return 1;
+        }
+                // cout<<h<<" ";
+        h--;
+        path[h][0] = x;
+        path[h][1] = y;
+        yy++;
+    }
+    // cout<<"kifkd";
+    return 0;
 }
